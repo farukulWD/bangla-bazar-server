@@ -24,14 +24,16 @@ const verifyEmailAddress = async (req, res) => {
     const option = {
       name: req.body.name,
       email: req.body.email,
+      baseUrl: process.env.STORE_URL,
       token: token,
     };
     const body = {
       from: process.env.EMAIL_USER,
       // from: "info@demomailtrap.com",
       to: `${req.body.email}`,
-      subject: "Email Activation",
-      subject: "Verify Your Email",
+      // subject: "Email Activation",
+      subject: "Verify Your account",
+      
       html: customerRegisterBody(option),
     };
 
