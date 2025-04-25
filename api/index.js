@@ -27,7 +27,7 @@ const {
 
 connectDB();
 const app = express();
-const server = http.createServer();
+const server = http.createServer(app);
 
 // We are using this for the express-rate-limit middleware
 // See: https://github.com/nfriedly/express-rate-limit
@@ -73,6 +73,7 @@ app.use("/static", express.static("public"));
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });
+
 
 const PORT = process.env.PORT || 5000;
 
