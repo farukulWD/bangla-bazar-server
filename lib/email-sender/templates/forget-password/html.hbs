@@ -222,6 +222,8 @@ const forgetPasswordEmailBody = (option) => { return `
                               style="background:#22c55e;color:white;border:1px solid #22c55e; padding: 10px 15px; border-radius: 4px; text-decoration:none;"
                             >Reset Password </a>
 
+                            <p>{option.baseUrl}/auth/reset-password/{option.token}</p>
+
                             <p style="margin-top: 50px;">If you did not initiate
                               this request, please contact us immediately at
                               support@banglabazar.com</p>
