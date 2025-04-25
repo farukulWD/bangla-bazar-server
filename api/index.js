@@ -3,8 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const path = require("path");
-// const http = require("http");
-// const { Server } = require("socket.io");
+const http = require("http");
+const { Server } = require("socket.io");
 
 const { connectDB } = require("../config/db");
 const productRoutes = require("../routes/productRoutes");
@@ -20,13 +20,14 @@ const currencyRoutes = require("../routes/currencyRoutes");
 const languageRoutes = require("../routes/languageRoutes");
 const notificationRoutes = require("../routes/notificationRoutes");
 const { isAuth, isAdmin } = require("../config/auth");
-// const {
-//   getGlobalSetting,
-//   getStoreCustomizationSetting,
-// } = require("../lib/notification/setting");
+const {
+  getGlobalSetting,
+  getStoreCustomizationSetting,
+} = require("../lib/notification/setting");
 
 connectDB();
 const app = express();
+const server = http.createServer();
 
 // We are using this for the express-rate-limit middleware
 // See: https://github.com/nfriedly/express-rate-limit
@@ -82,56 +83,54 @@ app.listen(PORT, () => console.log(`server running on port ${PORT}`));
 // app.listen(PORT, () => console.log(`server running on port ${PORT}`));
 
 // set up socket
-// const io = new Server(server, {
-//   cors: {
-//     origin: [
-//       "http://localhost:3000",
-//       "http://localhost:4100",
-//       "https://admin-banglabazar.vercel.app",
-//       "https://dashtar-admin.vercel.app",
-//       "https://banglabazar-store.vercel.app",
-//       "https://banglabazar-admin.netlify.app",
-//       "https://dashtar-admin.netlify.app",
-//       "https://banglabazar-store-nine.vercel.app",
-//     ], //add your origin here instead of this
-//     methods: ["PUT", "GET", "POST", "DELETE", "PATCH", "OPTIONS"],
-//     credentials: false,
-//     transports: ["websocket"],
-//   },
-// });
+const io = new Server(server, {
+  cors: {
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:4100",
+      "https://bangla-bazar-admin.vercel.app",
+      "https://bangla-bazar-store.vercel.app",
+    ], //add your origin here instead of this
+    methods: ["PUT", "GET", "POST", "DELETE", "PATCH", "OPTIONS"],
+    credentials: false,
+    transports: ["websocket"],
+  },
+});
 
-// io.on("connection", (socket) => {
-//   // console.log(`Socket ${socket.id} connected!`);
+// console.log(io)
 
-//   socket.on("notification", async (data) => {
-//     console.log("data", data);
-//     try {
-//       let updatedData = data;
+io.on("connection", (socket) => {
+  console.log(`Socket ${socket.id} connected!`);
 
-//       if (data?.option === "storeCustomizationSetting") {
-//         const storeCustomizationSetting = await getStoreCustomizationSetting(
-//           data
-//         );
-//         updatedData = {
-//           ...data,
-//           storeCustomizationSetting: storeCustomizationSetting,
-//         };
-//       }
-//       if (data?.option === "globalSetting") {
-//         const globalSetting = await getGlobalSetting(data);
-//         updatedData = {
-//           ...data,
-//           globalSetting: globalSetting,
-//         };
-//       }
-//       io.emit("notification", updatedData);
-//     } catch (error) {
-//       console.error("Error handling notification:", error);
-//     }
-//   });
+  socket.on("notification", async (data) => {
+    console.log("data", data);
+    try {
+      let updatedData = data;
 
-//   socket.on("disconnect", () => {
-//     console.log(`Socket ${socket.id} disconnected!`);
-//   });
-// });
+      if (data?.option === "storeCustomizationSetting") {
+        const storeCustomizationSetting = await getStoreCustomizationSetting(
+          data
+        );
+        updatedData = {
+          ...data,
+          storeCustomizationSetting: storeCustomizationSetting,
+        };
+      }
+      if (data?.option === "globalSetting") {
+        const globalSetting = await getGlobalSetting(data);
+        updatedData = {
+          ...data,
+          globalSetting: globalSetting,
+        };
+      }
+      io.emit("notification", updatedData);
+    } catch (error) {
+      console.error("Error handling notification:", error);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log(`Socket ${socket.id} disconnected!`);
+  });
+});
 // server.listen(PORT, () => console.log(`server running on port ${PORT}`));
