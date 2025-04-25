@@ -216,10 +216,9 @@ const forgetPasswordEmailBody = (option) => { return `
                               reset your password</p>
 
                             <a
-                              href="https:"
-                              app-dev.dashter.com
-                              reset-password
-                              ${option.token}
+                              href={`${option.baseUrl}/auth/reset-password/${option.token}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
                               style="background:#22c55e;color:white;border:1px solid #22c55e; padding: 10px 15px; border-radius: 4px; text-decoration:none;"
                             >Reset Password </a>
 

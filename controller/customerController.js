@@ -220,6 +220,7 @@ const forgetPassword = async (req, res) => {
     const option = {
       name: isAdded.name,
       email: isAdded.email,
+      baseUrl: process.env.STORE_URL,
       token: token,
     };
 
@@ -230,6 +231,7 @@ const forgetPassword = async (req, res) => {
       html: forgetPasswordEmailBody(option),
     };
 
+    console.log("option", option);
     const message = "Please check your email to reset password!";
     sendEmail(body, res, message);
   }
