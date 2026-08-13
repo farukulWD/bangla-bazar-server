@@ -48,7 +48,4 @@ router.put('/status/enabled/:id', updateEnabledStatus);
 // show/hide a Currency
 router.put('/status/live-exchange-rates/:id', updateLiveExchangeRateStatus);
 
-//delete a Currency
-router.delete('/:id', deleteCurrency);
-
 module.exports = router;

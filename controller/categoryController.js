@@ -16,7 +16,6 @@ const addCategory = async (req, res) => {
 
 // all multiple category
 const addAllCategory = async (req, res) => {
-  // console.log("category", req.body);
   try {
     await Category.deleteMany();
 
@@ -139,7 +138,7 @@ const updateManyCategory = async (req, res) => {
       },
       {
         multi: true,
-      }
+      },
     );
 
     res.send({
@@ -164,7 +163,7 @@ const updateStatus = async (req, res) => {
         $set: {
           status: newStatus,
         },
-      }
+      },
     );
     res.status(200).send({
       message: `Category ${
@@ -180,7 +179,6 @@ const updateStatus = async (req, res) => {
 //single category delete
 const deleteCategory = async (req, res) => {
   try {
-    console.log("id cat >>", req.params.id);
     await Category.deleteOne({ _id: req.params.id });
     await Category.deleteMany({ parentId: req.params.id });
     res.status(200).send({
@@ -192,22 +190,6 @@ const deleteCategory = async (req, res) => {
     });
   }
 
-  //This is for delete children category
-  // Category.updateOne(
-  //   { _id: req.params.id },
-  //   {
-  //     $pull: { children: req.body.title },
-  //   },
-  //   (err) => {
-  //     if (err) {
-  //       res.status(500).send({ message: err.message });
-  //     } else {
-  //       res.status(200).send({
-  //         message: 'Category Deleted Successfully!',
-  //       });
-  //     }
-  //   }
-  // );
 };
 
 // all multiple category delete

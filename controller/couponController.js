@@ -2,7 +2,6 @@ const dayjs = require("dayjs");
 const utc = require("dayjs/plugin/utc");
 dayjs.extend(utc);
 
-// const { mongo_connection } = require('../config/db'); // CCDev
 const Coupon = require("../models/Coupon");
 
 const addCoupon = async (req, res) => {
