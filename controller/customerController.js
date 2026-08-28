@@ -20,7 +20,6 @@ const verifyEmailAddress = async (req, res) => {
     });
   } else {
     const token = tokenForVerify(req.body);
-    console.log({ token });
     const option = {
       name: req.body.name,
       email: req.body.email,
@@ -130,7 +129,6 @@ const registerCustomer = async (req, res) => {
 
           // Create a new user only if not already registered
           const existingUser = await Customer.findOne({ email });
-          console.log("existingUser");
 
           if (existingUser) {
             return res.status(400).send({ message: "User already exists!" });
@@ -233,7 +231,6 @@ const forgetPassword = async (req, res) => {
       html: forgetPasswordEmailBody(option),
     };
 
-    console.log("option", option);
     const message = "Please check your email to reset password!";
     sendEmail(body, res, message);
   }

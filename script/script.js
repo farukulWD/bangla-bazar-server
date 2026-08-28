@@ -9,7 +9,7 @@ const generatePassword = () => {
     "hashPassword",
     hashPassword,
     "isPasswordCorrect",
-    isPasswordCorrect
+    isPasswordCorrect,
   );
 
   process.exit();

@@ -19,7 +19,7 @@ const settingRoutes = require("../routes/settingRoutes");
 const currencyRoutes = require("../routes/currencyRoutes");
 const languageRoutes = require("../routes/languageRoutes");
 const notificationRoutes = require("../routes/notificationRoutes");
-const { isAuth, isAdmin } = require("../config/auth");
+const { isAuth } = require("../config/auth");
 const {
   getGlobalSetting,
   getStoreCustomizationSetting,
@@ -77,11 +77,7 @@ app.get("*", (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-// const server = http.createServer(app);
-
 app.listen(PORT, () => console.log(`server running on port ${PORT}`));
-
-// app.listen(PORT, () => console.log(`server running on port ${PORT}`));
 
 // set up socket
 const io = new Server(server, {
@@ -98,13 +94,10 @@ const io = new Server(server, {
   },
 });
 
-// console.log(io)
-
 io.on("connection", (socket) => {
   console.log(`Socket ${socket.id} connected!`);
 
   socket.on("notification", async (data) => {
-    console.log("data", data);
     try {
       let updatedData = data;
 
@@ -134,4 +127,3 @@ io.on("connection", (socket) => {
     console.log(`Socket ${socket.id} disconnected!`);
   });
 });
-// server.listen(PORT, () => console.log(`server running on port ${PORT}`));

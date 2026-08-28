@@ -1,5 +1,4 @@
 const Language = require("../models/Language");
-const { mongo_connection } = require("../config/db"); // CCDev
 
 const addLanguage = async (req, res) => {
   try {
