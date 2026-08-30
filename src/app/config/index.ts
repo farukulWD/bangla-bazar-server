@@ -20,4 +20,7 @@ export default {
   email_secure: process.env.EMAIL_SECURE === "true" || false,
   email_tls_reject_unauthorized:
     process.env.EMAIL_TLS_REJECT_UNAUTHORIZED === "true" || false,
+  cloudinary_cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "",
+  cloudinary_api_key: process.env.CLOUDINARY_API_KEY || "",
+  cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET || "",
 };
