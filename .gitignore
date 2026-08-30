@@ -6,3 +6,4 @@ pnpm-lock.yaml
 .DS_Store
 **/.DS_Store
 dist
+logs

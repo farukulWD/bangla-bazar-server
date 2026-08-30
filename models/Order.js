@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const AutoIncrement = require("mongoose-sequence")(mongoose);
+const { nextSequence } = require("../lib/auto-increment");
 
 const orderSchema = new mongoose.Schema(
   {
@@ -83,11 +83,16 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-const Order = mongoose.model(
-  "Order",
-  orderSchema.plugin(AutoIncrement, {
-    inc_field: "invoice",
-    start_seq: 10000,
-  })
-);
+orderSchema.pre("save", async function (next) {
+  if (!this.isNew) return next();
+
+  try {
+    this.invoice = await nextSequence("invoice", 10000);
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+const Order = mongoose.model("Order", orderSchema);
 module.exports = Order;
