@@ -1,9 +1,8 @@
-import { TAuthUser } from "./auth.interface";
+import { TAuthUser } from "../modules/auth/auth.interface";
 
 declare global {
   namespace Express {
     interface Request {
-      // Optional: only routes behind the `isAuth` middleware have it set.
       user?: TAuthUser;
     }
   }
