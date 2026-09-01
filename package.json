@@ -14,7 +14,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "data:import": "node script/seed.js",
     "product": "node script/product.js",
-    "generate-password": "node script/script.js"
+    "generate-password": "node script/script.js",
+    "seed:superadmin": "tsx src/scripts/seedSuperAdmin.ts",
+    "seed:roles": "tsx src/scripts/seedRoles.ts",
+    "sync:permissions": "tsx src/scripts/seedRoles.ts --sync"
   },
   "author": "Bangla Bazar",
   "license": "Regular",

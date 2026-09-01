@@ -56,3 +56,19 @@ Folder Structure & Customization:
 Configuration & Deployment:
 
 We use heroku for hosting this server if you want to hosting on heroku just follow their documentation, You can also hosting this any other hosting services.
+
+Roles & Permissions:
+
+Permissions are declared in code (src/app/constants/permissions.ts); the grants that
+reference them are rows in the roles collection. Nothing keeps the two in step on its
+own, so:
+
+    ⦁	npm run seed:superadmin — creates the first superAdmin from SUPERADMIN_NAME /
+            SUPERADMIN_EMAIL / SUPERADMIN_PASSWORD. No HTTP route can create one, and role
+            writes are gated behind superAdmin, so a fresh database needs this first.
+    ⦁	npm run seed:roles — creates the baseline roles (admin, catalog-manager, support).
+            Existing roles are skipped; --force overwrites their permissions.
+    ⦁	npm run sync:permissions — run this after adding or removing a permission. It grants
+            newly declared permissions to the full-access "admin" role and prunes retired keys
+            from every role (a stale key makes the next edit of that role fail validation).
+            Add -- --dry-run to see the diff without writing.
