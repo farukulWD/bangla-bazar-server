@@ -4,8 +4,11 @@ import AppError from "../errors/AppError";
 import catchAsync from "../utils/catchAsync";
 import { TAuthUser } from "../modules/auth/auth.interface";
 import { assertTokenNotStale } from "../modules/auth/auth.session";
-import varifyToken from "../utils/verifyToken";
+import { verifyAccessToken } from "../modules/auth/auth.utils";
 import { TRole } from "../modules/roles/roles.interface";
+// Side-effect import: `populate("role")` below needs the Role model registered on
+// this path, and roles.interface is types only — erased at runtime.
+import "../modules/roles/roles.model";
 import { User } from "../modules/users/user.model";
 
 const checkAuth = catchAsync(
@@ -18,7 +21,7 @@ const checkAuth = catchAsync(
 
     let payload;
     try {
-      payload = varifyToken(token);
+      payload = verifyAccessToken(token);
     } catch {
       throw new AppError(
         httpStatus.UNAUTHORIZED,

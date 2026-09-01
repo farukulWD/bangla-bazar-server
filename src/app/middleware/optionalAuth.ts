@@ -4,7 +4,7 @@ import { isTokenStale } from "../modules/auth/auth.session";
 import { TRole } from "../modules/roles/roles.interface";
 
 import catchAsync from "../utils/catchAsync";
-import varifyToken from "../utils/verifyToken";
+import { verifyAccessToken } from "../modules/auth/auth.utils";
 import { User } from "../modules/users/user.model";
 
 const optionalAuth = catchAsync(
@@ -16,7 +16,7 @@ const optionalAuth = catchAsync(
     const token = header.slice("Bearer ".length).trim();
     let payload;
     try {
-      payload = varifyToken(token);
+      payload = verifyAccessToken(token);
     } catch {
       return next();
     }

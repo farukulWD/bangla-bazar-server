@@ -1,8 +1,7 @@
 import config from "../../config";
-import { USER_ROLE } from "./user.constant";
 import { model, Schema } from "mongoose";
-import bcrypt from "bcryptjs";
-import { TUser, UserModel } from "./user.interface";
+import bcrypt from "bcrypt";
+import { TUser, UserModel, UserType } from "./user.interface";
 
 const userSchema = new Schema<TUser, UserModel>(
   {
@@ -14,15 +13,23 @@ const userSchema = new Schema<TUser, UserModel>(
       type: String,
       unique: true,
       lowercase: true,
+      sparse: true,
     },
     phone: {
       type: String,
       required: false,
+      sparse: true,
+      unique: true,
     },
     role: {
+      type: Schema.Types.ObjectId,
+      ref: "Role",
+      default: null,
+    },
+    userType: {
       type: String,
-      enum: USER_ROLE,
-      default: "customer",
+      enum: Object.values(UserType),
+      default: UserType.Customer,
     },
     password: {
       type: String,
@@ -78,8 +85,17 @@ const userSchema = new Schema<TUser, UserModel>(
   },
 );
 
+userSchema.index({ email: 1 }, { unique: true, sparse: true });
+userSchema.index({ isDeleted: 1, createdAt: -1 });
+userSchema.index({ isDeleted: 1, name: 1 });
+
 userSchema.pre("save", async function () {
   const user = this;
+  // Registration verifies the code long after the password was bcrypted into the
+  // pending record — hashing again here would make it unmatchable.
+  if (user.$locals.skipPasswordHash) {
+    return;
+  }
   if (!user.password || !user.isModified("password")) {
     return;
   }
@@ -87,6 +103,9 @@ userSchema.pre("save", async function () {
     user.password,
     Number(config.bcrypt_salt_rounds),
   );
+  if (!this.isNew) {
+    this.passwordChangedAt = new Date(Date.now() - 1000);
+  }
 });
 
 // set '' after saving password

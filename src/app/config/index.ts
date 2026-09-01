@@ -11,7 +11,7 @@ export default {
   jwt_access_expiration: process.env.JWT_EXPIRATION || "1d",
   jwt_refresh_secret: process.env.JWT_REFRESH_SECRET || "",
   jwt_refresh_expiration: process.env.JWT_REFRESH_EXPIRATION || "7d",
-  bcrypt_salt_rounds: process.env.SALT_ROUND || 12,
+  bcrypt_salt_rounds: Number(process.env.SALT_ROUND) || 12,
   email_service: process.env.EMAIL_SERVICE || "",
   email_user: process.env.EMAIL_USER || "",
   email_password: process.env.EMAIL_PASSWORD || "",
@@ -24,4 +24,15 @@ export default {
   cloudinary_cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "",
   cloudinary_api_key: process.env.CLOUDINARY_API_KEY || "",
   cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET || "",
+  redis_url: process.env.REDIS_URL || "",
+  // The registration code's lifetime is also the resend cooldown — one live code per number.
+  otp_code_ttl_seconds: Number(process.env.OTP_CODE_TTL_SECONDS) || 300,
+  otp_pending_ttl_seconds: Number(process.env.OTP_PENDING_TTL_SECONDS) || 1800,
+  otp_max_attempts: Number(process.env.OTP_MAX_ATTEMPTS) || 5,
+  // A verified reset code buys this long to actually choose the new password.
+  password_reset_token_ttl_seconds:
+    Number(process.env.PASSWORD_RESET_TOKEN_TTL_SECONDS) || 900,
+  refresh_cookie_max_age_ms:
+    Number(process.env.REFRESH_COOKIE_MAX_AGE_MS) || 30 * 24 * 60 * 60 * 1000,
+  client_url: process.env.CLIENT_URL || "http://localhost:3000",
 };

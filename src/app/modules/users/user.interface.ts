@@ -1,4 +1,4 @@
-import { HydratedDocument, Model } from "mongoose";
+import { HydratedDocument, Model, Types } from "mongoose";
 import { USER_ROLE } from "./user.constant";
 
 export type TUserRole = keyof typeof USER_ROLE;
@@ -11,11 +11,22 @@ export enum UserType {
   SuperAdmin = "superAdmin",
 }
 
+export type TCreateUser = {
+  name: string;
+  email?: string;
+  phone?: string;
+  password: string;
+  userType?: UserType.Admin | UserType.SuperAdmin | UserType.Customer;
+  role?: string | null;
+};
+
 export type TUser = {
   name: string;
   email?: string;
   phone?: string;
-  role: TUserRole;
+  // Ref to the Role collection; populated as TRole by checkAuth.
+  role: Types.ObjectId | null;
+  userType: UserType;
   password?: string;
   status: TUserStatus;
   image?: string;
