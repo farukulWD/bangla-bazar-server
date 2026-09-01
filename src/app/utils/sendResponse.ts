@@ -15,7 +15,9 @@ const sendResponse = <T>(res: Response, data: TResponseData<T>) => {
     success: data.success,
     message: data.message,
     data: data.data,
-    pagination: data.pagination || [],
+    // Omitted rather than defaulted: a non-list response has no pagination, and an
+    // empty array is the wrong shape for a field typed as TPagination.
+    ...(data.pagination ? { pagination: data.pagination } : {}),
   });
 };
 

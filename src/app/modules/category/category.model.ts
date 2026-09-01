@@ -1,31 +1,34 @@
 import { model, Schema } from "mongoose";
-import { ICategory } from "./category.interface";
+import { CATEGORY_STATUS } from "./category.constant";
+import { TCategory } from "./category.interface";
 
-const categorySchema = new Schema<ICategory>(
+const categorySchema = new Schema<TCategory>(
   {
     name: {
       type: String,
       required: true,
+      trim: true,
     },
     description: {
       type: String,
       required: false,
+      trim: true,
     },
     slug: {
       type: String,
       required: true,
+      trim: true,
+      lowercase: true,
     },
     parentId: {
-      type: String,
-      required: false,
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+      default: null,
     },
     parentName: {
       type: String,
       required: false,
-    },
-    id: {
-      type: String,
-      required: false,
+      trim: true,
     },
     icon: {
       type: String,
@@ -34,8 +37,12 @@ const categorySchema = new Schema<ICategory>(
     status: {
       type: String,
       lowercase: true,
-      enum: ["show", "hide"],
+      enum: CATEGORY_STATUS,
       default: "show",
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
   {
@@ -44,5 +51,8 @@ const categorySchema = new Schema<ICategory>(
 );
 
 categorySchema.index({ name: "text" });
+categorySchema.index({ slug: 1 }, { unique: true });
+categorySchema.index({ isDeleted: 1, status: 1 });
+categorySchema.index({ parentId: 1 });
 
-export const Category = model<ICategory>("Category", categorySchema);
+export const Category = model<TCategory>("Category", categorySchema);
