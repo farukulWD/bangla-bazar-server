@@ -9,8 +9,6 @@ let server: Server;
 
 const main = async () => {
   await connectDB();
-  // In-process: `start:ts` is a single long-lived node process, so the queue needs
-  // no separate runner. Split this into its own entrypoint when it earns one.
   startWorkers();
 
   server = app.listen(config.port, () => {
@@ -20,8 +18,13 @@ const main = async () => {
 
 main();
 
-process.on("uncaughtException", () => {
-  logger.error("UncaughtException error, shutting the server...");
+const describe = (reason: unknown): string => {
+  const error = reason as Error;
+  return error?.stack || error?.message || String(reason);
+};
+
+process.on("uncaughtException", (error) => {
+  logger.error(`UncaughtException, shutting the server: ${describe(error)}`);
   if (server) {
     server.close(() => {
       process.exit(1);
@@ -29,8 +32,8 @@ process.on("uncaughtException", () => {
   }
 });
 
-process.on("unhandledRejection", () => {
-  logger.error("unhandledRejection error, shutting the server...");
+process.on("unhandledRejection", (reason) => {
+  logger.error(`unhandledRejection, shutting the server: ${describe(reason)}`);
   if (server) {
     server.close(() => {
       process.exit(1);

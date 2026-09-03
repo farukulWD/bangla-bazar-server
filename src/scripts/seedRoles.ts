@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import {
   AttributePermission,
   CategoryPermission,
+  OrderPermission,
   PERMISSION_MODULES,
   PermissionModule,
   ProductPermission,
@@ -80,6 +81,14 @@ const supportPermissions = (): TRoleModule[] => [
       [UserPermission.ViewUsers]: true,
     },
   },
+  {
+    module: PermissionModule.Order,
+    permissions: {
+      [OrderPermission.ViewOrders]: true,
+      [OrderPermission.UpdateOrderStatus]: true,
+      [OrderPermission.CancelOrder]: true,
+    },
+  },
 ];
 
 const seeds = [
@@ -98,7 +107,7 @@ const seeds = [
   {
     name: "support",
     description:
-      "Reads the user list to answer questions. Changes nothing.",
+      "Handles customer orders — reads the user list, moves orders along and cancels them. Cannot change payment status, and cannot touch the catalogue.",
     modules: supportPermissions,
   },
 ];
