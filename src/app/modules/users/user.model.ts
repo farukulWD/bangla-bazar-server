@@ -61,11 +61,6 @@ const userSchema = new Schema<TUser, UserModel>(
       type: String,
       required: false,
     },
-    shippingAddress: {
-      // TODO: Should be separate collection
-      type: Object,
-      required: false,
-    },
     isDeleted: {
       type: Boolean,
       require: true,

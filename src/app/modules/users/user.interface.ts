@@ -57,8 +57,6 @@ export type TUser = {
   address?: string;
   country?: string;
   city?: string;
-  // TODO: Should be separate collection
-  shippingAddress?: Record<string, unknown>;
   isDeleted: boolean;
   isPhoneVerify: boolean;
   isEmailVerify: boolean;
