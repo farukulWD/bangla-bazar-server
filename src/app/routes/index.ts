@@ -4,6 +4,7 @@ import { addressRoutes } from "../modules/address/address.routes";
 import { attributeRoutes } from "../modules/attribute/attribute.routes";
 import { authRoutes } from "../modules/auth/auth.routes";
 import { categoryRoutes } from "../modules/category/category.routes";
+import { couponRoutes } from "../modules/coupon/coupon.routes";
 import { productRoutes } from "../modules/product/product.routes";
 import { roleRoutes } from "../modules/roles/roles.routes";
 import { userRoutes } from "../modules/users/user.routes";
@@ -15,6 +16,7 @@ const moduleRoutes = [
   { path: "/auth", route: authRoutes },
   { path: "/attributes", route: attributeRoutes },
   { path: "/category", route: categoryRoutes },
+  { path: "/coupons", route: couponRoutes },
   { path: "/products", route: productRoutes },
   { path: "/roles", route: roleRoutes },
   { path: "/users", route: userRoutes },

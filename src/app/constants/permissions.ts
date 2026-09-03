@@ -4,6 +4,7 @@ export enum PermissionModule {
   Category = "category",
   Attribute = "attribute",
   Product = "product",
+  Coupon = "coupon",
 }
 
 export type TPermissionOf<M extends PermissionModule> =
@@ -58,12 +59,21 @@ export enum ProductPermission {
   DeleteProduct = "can_delete_product",
 }
 
+export enum CouponPermission {
+  ViewCoupons = "can_view_coupons",
+  AddCoupon = "can_add_coupon",
+  EditCoupon = "can_edit_coupon",
+  PublishCoupon = "can_publish_coupon",
+  DeleteCoupon = "can_delete_coupon",
+}
+
 export const PERMISSION_REGISTRY = {
   [PermissionModule.User]: UserPermission,
   [PermissionModule.Role]: RolePermission,
   [PermissionModule.Category]: CategoryPermission,
   [PermissionModule.Attribute]: AttributePermission,
   [PermissionModule.Product]: ProductPermission,
+  [PermissionModule.Coupon]: CouponPermission,
 } as const;
 
 export const PERMISSION_MODULE_LABELS: Record<PermissionModule, string> = {
@@ -72,6 +82,7 @@ export const PERMISSION_MODULE_LABELS: Record<PermissionModule, string> = {
   [PermissionModule.Category]: "Categories",
   [PermissionModule.Attribute]: "Attributes",
   [PermissionModule.Product]: "Products",
+  [PermissionModule.Coupon]: "Coupons",
 };
 
 export const PERMISSION_LABELS: Record<TAnyPermission, string> = {
@@ -101,6 +112,11 @@ export const PERMISSION_LABELS: Record<TAnyPermission, string> = {
   [ProductPermission.EditProduct]: "Edit product and its variants",
   [ProductPermission.PublishProduct]: "Publish or unpublish product",
   [ProductPermission.DeleteProduct]: "Delete product",
+  [CouponPermission.ViewCoupons]: "View coupons",
+  [CouponPermission.AddCoupon]: "Add coupon",
+  [CouponPermission.EditCoupon]: "Edit coupon",
+  [CouponPermission.PublishCoupon]: "Publish or unpublish coupon",
+  [CouponPermission.DeleteCoupon]: "Delete coupon",
 };
 
 export const PERMISSION_MODULES = Object.values(PermissionModule);
