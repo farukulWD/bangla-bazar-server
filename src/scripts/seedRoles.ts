@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
 import {
+  AttributePermission,
   CategoryPermission,
   PERMISSION_MODULES,
   PermissionModule,
+  ProductPermission,
   TAnyPermission,
   UserPermission,
   isValidPermission,
@@ -51,6 +53,24 @@ const catalogManagerPermissions = (): TRoleModule[] => [
       [CategoryPermission.PublishCategory]: true,
     },
   },
+  {
+    module: PermissionModule.Attribute,
+    permissions: {
+      [AttributePermission.ViewAttributes]: true,
+      [AttributePermission.AddAttribute]: true,
+      [AttributePermission.EditAttribute]: true,
+      [AttributePermission.PublishAttribute]: true,
+    },
+  },
+  {
+    module: PermissionModule.Product,
+    permissions: {
+      [ProductPermission.ViewProducts]: true,
+      [ProductPermission.AddProduct]: true,
+      [ProductPermission.EditProduct]: true,
+      [ProductPermission.PublishProduct]: true,
+    },
+  },
 ];
 
 const supportPermissions = (): TRoleModule[] => [
@@ -72,7 +92,7 @@ const seeds = [
   {
     name: "catalog-manager",
     description:
-      "Maintains the category tree — creates, edits, publishes and hides categories. Cannot delete one, and cannot touch users or roles.",
+      "Maintains the catalogue — categories, attributes and products. Creates, edits, publishes and hides all three. Cannot delete any of them, and cannot touch users or roles.",
     modules: catalogManagerPermissions,
   },
   {

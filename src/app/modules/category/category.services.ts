@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 import QueryBuilder from "../../builder/queryBuilder";
 import AppError from "../../errors/AppError";
 import { TPagination } from "../../interface/common";
+import { queueCascadeCategory } from "../../queues/products.queue";
 import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary";
 import {
   CATEGORY_QUERY_CONTROL_KEYS,
@@ -252,7 +253,8 @@ const updateCategory = async (
     update.slug = await generateUniqueSlug(payload.slug, category._id);
   }
 
-  if (payload.description !== undefined) update.description = payload.description;
+  if (payload.description !== undefined)
+    update.description = payload.description;
   if (payload.status !== undefined) update.status = payload.status;
 
   if (file) {
@@ -287,6 +289,10 @@ const deleteCategory = async (id: string) => {
 
   await Category.updateMany({ _id: { $in: ids } }, { isDeleted: true });
 
+  await queueCascadeCategory({
+    categoryIds: ids.map((entry) => entry.toString()),
+  });
+
   return { deleted: ids.length };
 };
 
@@ -301,7 +307,8 @@ const bulkUpdateCategories = async (
     update.parentId = parent!.parentId;
     update.parentName = parent!.parentName;
   }
-  if (payload.description !== undefined) update.description = payload.description;
+  if (payload.description !== undefined)
+    update.description = payload.description;
   if (payload.status !== undefined) update.status = payload.status;
   if (payload.icon !== undefined) update.icon = payload.icon;
 
@@ -342,6 +349,10 @@ const bulkDeleteCategories = async (ids: string[]): Promise<TBulkResult> => {
   );
 
   await Category.updateMany({ _id: { $in: branch } }, { isDeleted: true });
+
+  await queueCascadeCategory({
+    categoryIds: branch.map((entry) => entry.toString()),
+  });
 
   const missing = ids.length - existing.length;
 
