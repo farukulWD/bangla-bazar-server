@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 import QueryBuilder from "../../builder/queryBuilder";
 import AppError from "../../errors/AppError";
 import { TPagination } from "../../interface/common";
+import { queueCascadeAttributeValue } from "../../queues/products.queue";
 import {
   ATTRIBUTE_QUERY_CONTROL_KEYS,
   ATTRIBUTE_SEARCHABLE_FIELDS,
@@ -269,6 +270,7 @@ const deleteAttribute = async (id: string): Promise<{ deleted: number }> => {
   const attribute = await findAttributeOrThrow(id);
   attribute.isDeleted = true;
   await attribute.save();
+  await queueCascadeAttributeValue({ attributeId: id });
 
   return { deleted: 1 };
 };
@@ -339,6 +341,8 @@ const deleteAttributeValue = async (
   value.isDeleted = true;
   await attribute.save();
 
+  await queueCascadeAttributeValue({ attributeId: id, valueId });
+
   return toAttributeResponse(attribute);
 };
 
@@ -362,6 +366,10 @@ const bulkUpdateAttributes = async (
   );
 
   const missing = ids.length - result.matchedCount;
+
+  await Promise.all(
+    ids.map((attributeId) => queueCascadeAttributeValue({ attributeId })),
+  );
 
   return {
     succeeded: result.matchedCount,
@@ -413,6 +421,12 @@ const bulkDeleteAttributeValues = async (
   });
 
   await attribute.save();
+
+  await Promise.all(
+    valueIds.map((valueId) =>
+      queueCascadeAttributeValue({ attributeId: id, valueId }),
+    ),
+  );
 
   const missing = valueIds.length - succeeded;
 

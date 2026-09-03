@@ -3,6 +3,7 @@ export enum PermissionModule {
   Role = "role",
   Category = "category",
   Attribute = "attribute",
+  Product = "product",
 }
 
 export type TPermissionOf<M extends PermissionModule> =
@@ -49,11 +50,20 @@ export enum AttributePermission {
   DeleteAttribute = "can_delete_attribute",
 }
 
+export enum ProductPermission {
+  ViewProducts = "can_view_products",
+  AddProduct = "can_add_product",
+  EditProduct = "can_edit_product",
+  PublishProduct = "can_publish_product",
+  DeleteProduct = "can_delete_product",
+}
+
 export const PERMISSION_REGISTRY = {
   [PermissionModule.User]: UserPermission,
   [PermissionModule.Role]: RolePermission,
   [PermissionModule.Category]: CategoryPermission,
   [PermissionModule.Attribute]: AttributePermission,
+  [PermissionModule.Product]: ProductPermission,
 } as const;
 
 export const PERMISSION_MODULE_LABELS: Record<PermissionModule, string> = {
@@ -61,6 +71,7 @@ export const PERMISSION_MODULE_LABELS: Record<PermissionModule, string> = {
   [PermissionModule.Role]: "Roles",
   [PermissionModule.Category]: "Categories",
   [PermissionModule.Attribute]: "Attributes",
+  [PermissionModule.Product]: "Products",
 };
 
 export const PERMISSION_LABELS: Record<TAnyPermission, string> = {
@@ -85,6 +96,11 @@ export const PERMISSION_LABELS: Record<TAnyPermission, string> = {
   [AttributePermission.EditAttribute]: "Edit attribute and its values",
   [AttributePermission.PublishAttribute]: "Publish or unpublish attribute",
   [AttributePermission.DeleteAttribute]: "Delete attribute or its values",
+  [ProductPermission.ViewProducts]: "View products",
+  [ProductPermission.AddProduct]: "Add product",
+  [ProductPermission.EditProduct]: "Edit product and its variants",
+  [ProductPermission.PublishProduct]: "Publish or unpublish product",
+  [ProductPermission.DeleteProduct]: "Delete product",
 };
 
 export const PERMISSION_MODULES = Object.values(PermissionModule);

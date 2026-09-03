@@ -4,6 +4,7 @@ import {
   CategoryPermission,
   PERMISSION_MODULES,
   PermissionModule,
+  ProductPermission,
   TAnyPermission,
   UserPermission,
   isValidPermission,
@@ -61,6 +62,15 @@ const catalogManagerPermissions = (): TRoleModule[] => [
       [AttributePermission.PublishAttribute]: true,
     },
   },
+  {
+    module: PermissionModule.Product,
+    permissions: {
+      [ProductPermission.ViewProducts]: true,
+      [ProductPermission.AddProduct]: true,
+      [ProductPermission.EditProduct]: true,
+      [ProductPermission.PublishProduct]: true,
+    },
+  },
 ];
 
 const supportPermissions = (): TRoleModule[] => [
@@ -82,7 +92,7 @@ const seeds = [
   {
     name: "catalog-manager",
     description:
-      "Maintains the category tree and the product attributes — creates, edits, publishes and hides both. Cannot delete either, and cannot touch users or roles.",
+      "Maintains the catalogue — categories, attributes and products. Creates, edits, publishes and hides all three. Cannot delete any of them, and cannot touch users or roles.",
     modules: catalogManagerPermissions,
   },
   {

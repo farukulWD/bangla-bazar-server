@@ -6,9 +6,9 @@ import {
 import checkAuth from "../../middleware/checkAuth";
 import checkPermission from "../../middleware/checkPermission";
 import validateRequest from "../../middleware/validateRequest";
+import { parseFormData } from "../../utils/parseFormData";
 import { upload } from "../../utils/sendImageToCloudinary";
 import { categoryController } from "./category.controller";
-import { parseFormData } from "./category.utils";
 import { categoryValidation } from "./category.validation";
 
 const router = Router();

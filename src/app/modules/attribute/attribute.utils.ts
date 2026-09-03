@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { generateUniqueSlug as uniqueSlug } from "../../utils/slug";
 import {
   TAttributeDocument,
   TAttributeResponse,
@@ -6,38 +7,13 @@ import {
 } from "./attribute.interface";
 import { Attribute } from "./attribute.model";
 
-export const slugify = (name: string): string =>
-  name
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
+export { slugify } from "../../utils/slug";
 
-export const generateUniqueSlug = async (
+export const generateUniqueSlug = (
   name: string,
   excludeId?: Types.ObjectId | string,
   taken?: Set<string>,
-): Promise<string> => {
-  const base = slugify(name) || "attribute";
-
-  for (let suffix = 1; ; suffix += 1) {
-    const candidate = suffix === 1 ? base : `${base}-${suffix}`;
-
-    if (taken?.has(candidate)) {
-      continue;
-    }
-
-    const clash = await Attribute.findOne({
-      slug: candidate,
-      ...(excludeId ? { _id: { $ne: excludeId } } : {}),
-    }).select("_id");
-
-    if (!clash) {
-      return candidate;
-    }
-  }
-};
+): Promise<string> => uniqueSlug(Attribute, "attribute", name, excludeId, taken);
 
 export const toAttributeResponse = (
   attribute: TAttributeDocument,
