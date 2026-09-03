@@ -35,4 +35,8 @@ export default {
   refresh_cookie_max_age_ms:
     Number(process.env.REFRESH_COOKIE_MAX_AGE_MS) || 30 * 24 * 60 * 60 * 1000,
   client_url: process.env.CLIENT_URL || "http://localhost:3000",
+  // Read only by `npm run seed:superadmin` — no HTTP route can create a superAdmin.
+  superadmin_name: process.env.SUPERADMIN_NAME || "",
+  superadmin_email: process.env.SUPERADMIN_EMAIL || "",
+  superadmin_password: process.env.SUPERADMIN_PASSWORD || "",
 };

@@ -17,3 +17,11 @@ export type TRole = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type TCreateRole = {
+  name: string;
+  description?: string;
+  modules?: TRoleModule[];
+};
+
+export type TUpdateRole = Partial<TCreateRole> & { isActive?: boolean };

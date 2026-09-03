@@ -1,5 +1,12 @@
+/**
+ * Permissions live in code, the grants that reference them live in Mongo. After
+ * adding or removing anything here, run `npm run sync:permissions` so existing
+ * roles pick up the new key and drop the retired one.
+ */
 export enum PermissionModule {
   User = "user",
+  Role = "role",
+  Category = "category",
 }
 
 export type TPermissionOf<M extends PermissionModule> =
@@ -19,9 +26,36 @@ export enum UserPermission {
   DeleteUser = "can_delete_user",
 }
 
+/**
+ * A role is assigned to a user through the user module (`can_promote_user`,
+ * `can_edit_user`), so there is deliberately no `can_assign_role` here.
+ */
+export enum RolePermission {
+  ViewRoles = "can_view_roles",
+  AddRole = "can_add_role",
+  EditRole = "can_edit_role",
+  DeleteRole = "can_delete_role",
+}
+
+export enum CategoryPermission {
+  ViewCategories = "can_view_categories",
+  AddCategory = "can_add_category",
+  EditCategory = "can_edit_category",
+  PublishCategory = "can_publish_category",
+  DeleteCategory = "can_delete_category",
+}
+
 export const PERMISSION_REGISTRY = {
   [PermissionModule.User]: UserPermission,
+  [PermissionModule.Role]: RolePermission,
+  [PermissionModule.Category]: CategoryPermission,
 } as const;
+
+export const PERMISSION_MODULE_LABELS: Record<PermissionModule, string> = {
+  [PermissionModule.User]: "Users",
+  [PermissionModule.Role]: "Roles",
+  [PermissionModule.Category]: "Categories",
+};
 
 export const PERMISSION_LABELS: Record<TAnyPermission, string> = {
   [UserPermission.ViewUsers]: "View users",
@@ -31,4 +65,40 @@ export const PERMISSION_LABELS: Record<TAnyPermission, string> = {
   [UserPermission.DemoteUser]: "Demote user",
   [UserPermission.DeactivateUser]: "Deactivate user",
   [UserPermission.DeleteUser]: "Delete user",
+  [RolePermission.ViewRoles]: "View roles",
+  [RolePermission.AddRole]: "Add role",
+  [RolePermission.EditRole]: "Edit role",
+  [RolePermission.DeleteRole]: "Delete role",
+  [CategoryPermission.ViewCategories]: "View categories",
+  [CategoryPermission.AddCategory]: "Add category",
+  [CategoryPermission.EditCategory]: "Edit category",
+  [CategoryPermission.PublishCategory]: "Publish or unpublish category",
+  [CategoryPermission.DeleteCategory]: "Delete category",
 };
+
+export const PERMISSION_MODULES = Object.values(PermissionModule);
+
+export const permissionsOfModule = (
+  module: PermissionModule,
+): TAnyPermission[] =>
+  Object.values(PERMISSION_REGISTRY[module]) as TAnyPermission[];
+
+export const isValidPermission = (
+  module: string,
+  permission: string,
+): boolean =>
+  PERMISSION_MODULES.includes(module as PermissionModule) &&
+  (permissionsOfModule(module as PermissionModule) as string[]).includes(
+    permission,
+  );
+
+/** What the role editor renders: every module with its labelled permissions. */
+export const permissionCatalogue = () =>
+  PERMISSION_MODULES.map((module) => ({
+    module,
+    label: PERMISSION_MODULE_LABELS[module],
+    permissions: permissionsOfModule(module).map((key) => ({
+      key,
+      label: PERMISSION_LABELS[key],
+    })),
+  }));
