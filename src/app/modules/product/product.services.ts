@@ -4,6 +4,7 @@ import QueryBuilder from "../../builder/queryBuilder";
 import AppError from "../../errors/AppError";
 import { TPagination } from "../../interface/common";
 import { queueImageUpload } from "../../queues/products.queue";
+import { getSettings } from "../settings/settings.cache";
 import { Attribute } from "../attribute/attribute.model";
 import { Category } from "../category/category.model";
 import {
@@ -24,12 +25,26 @@ import {
   TUpdateProduct,
 } from "./product.interface";
 import { Product } from "./product.model";
+
+const assertImageCount = async (images?: string[]): Promise<void> => {
+  if (!images) {
+    return;
+  }
+
+  const { store } = await getSettings();
+
+  if (images.length > store.numberOfImagePerProduct) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `A product can have at most ${store.numberOfImagePerProduct} images`,
+    );
+  }
+};
 import {
   deriveDiscount,
   generateUniqueSlug,
   liveVariants,
   toProductResponse,
-  variantKey,
 } from "./product.utils";
 import { productRowSchema } from "./product.validation";
 
@@ -181,6 +196,8 @@ const createProduct = async (
   files?: Express.Multer.File[],
 ): Promise<TProductResponse> => {
   const variantRows = payload.variants ?? [];
+
+  await assertImageCount(payload.images);
 
   if (variantRows.length) {
     assertNoDuplicateVariants(variantRows);
@@ -440,6 +457,8 @@ const updateProduct = async (
 ): Promise<TProductResponse> => {
   const product = await findProductOrThrow(id);
 
+  await assertImageCount(payload.images);
+
   if (payload.title !== undefined) {
     product.title = payload.title;
     // The slug tracks the title unless the caller sets one explicitly.
@@ -565,6 +584,8 @@ const bulkCreateProducts = async (payload: unknown[]): Promise<TBulkResult> => {
 
       const variants = variantRows.map(buildVariant);
       const isCombination = variants.length > 0;
+
+      await assertImageCount(row.images);
 
       await Product.create({
         title: row.title,

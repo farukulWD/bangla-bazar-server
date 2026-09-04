@@ -1,5 +1,4 @@
 import { Worker } from "bullmq";
-import { LOW_STOCK_THRESHOLD } from "../modules/order/order.constant";
 import { STAFF_ROUTES } from "../modules/notification/notification.catalog";
 import { notify } from "../modules/notification/notification.emit";
 import { staffContacts } from "../modules/notification/notification.recipients";
@@ -7,6 +6,7 @@ import { TOrder } from "../modules/order/order.interface";
 import { Order } from "../modules/order/order.model";
 import { TProductResponse } from "../modules/product/product.interface";
 import { Product } from "../modules/product/product.model";
+import { getSettings } from "../modules/settings/settings.cache";
 import { TUser } from "../modules/users/user.interface";
 import { User } from "../modules/users/user.model";
 import { logger } from "../shared/logger";
@@ -61,6 +61,11 @@ const emailParams = (order: TOrder, name: string): TOrderEmailParams => ({
   total: order.total,
 });
 
+/**
+ * The one place a customer is contacted about their own order, so it is the one
+ * place the `emailToCustomer` switch has to be read. SMS is deliberately outside
+ * it: a shop that stops emailing receipts still wants the delivery text to go.
+ */
 const sendToContacts = async (
   to: { email: string; phone: string },
   subject: string,
@@ -68,7 +73,9 @@ const sendToContacts = async (
   text: string,
   sms: string,
 ): Promise<void> => {
-  if (to.email) {
+  const { store } = await getSettings();
+
+  if (to.email && store.emailToCustomer) {
     await sendEmail({ to: to.email, subject, html, text });
   }
 
@@ -128,10 +135,12 @@ const runOrderStatus = async (payload: TOrderStatusJob) => {
 };
 
 const runLowStock = async (payload: TLowStockJob) => {
+  const { checkout } = await getSettings();
+
   const products = await Product.find({
     _id: { $in: payload.productIds },
     isDeleted: { $ne: true },
-    stock: { $lte: LOW_STOCK_THRESHOLD },
+    stock: { $lte: checkout.lowStockThreshold },
   })
     .select("title sku stock")
     .lean<TProductResponse[]>();

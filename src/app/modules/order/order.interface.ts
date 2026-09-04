@@ -6,13 +6,14 @@ import {
   ORDER_STATUS,
   PAYMENT_METHODS,
   PAYMENT_STATUSES,
-  SHIPPING_OPTIONS,
+  SHIPPING_OPTION_KEYS,
 } from "./order.constant";
+import { TShippingOptionSetting } from "../settings/settings.interface";
 
 export type TOrderStatus = (typeof ORDER_STATUS)[number];
 export type TPaymentMethod = (typeof PAYMENT_METHODS)[number];
 export type TPaymentStatus = (typeof PAYMENT_STATUSES)[number];
-export type TShippingKey = (typeof SHIPPING_OPTIONS)[number]["key"];
+export type TShippingKey = (typeof SHIPPING_OPTION_KEYS)[number];
 
 export type TOrderItem = {
   product: Types.ObjectId;
@@ -39,11 +40,6 @@ export type TOrderAddress = {
   zipCode: string;
 };
 
-/**
- * What the discount was, frozen at placement. The coupon is referenced for
- * analytics, but its terms are copied for the same reason the items are: a coupon
- * can be edited or deleted, and an invoice must still explain the money.
- */
 export type TOrderCoupon = {
   coupon: Types.ObjectId;
   code: string;
@@ -107,7 +103,7 @@ export type TOrderStats = {
 } & Record<TOrderStatus, number>;
 
 export type TCheckoutOptions = {
-  shipping: (typeof SHIPPING_OPTIONS)[number][];
+  shipping: ({ key: TShippingKey } & Omit<TShippingOptionSetting, "enabled">)[];
   paymentMethods: TPaymentMethod[];
   freeDeliveryOver: number;
 };
