@@ -591,6 +591,31 @@ const updatePaymentStatus = async (
   return updated;
 };
 
+const markPaidByGateway = async (
+  orderId: Types.ObjectId,
+  paidAt: Date,
+): Promise<TOrder | null> => {
+  const updated = await Order.findOneAndUpdate(
+    { _id: orderId, paymentStatus: "pending", status: { $ne: "cancelled" } },
+    { $set: { paymentStatus: "paid", paidAt } },
+    { new: true },
+  ).lean<TOrder | null>();
+
+  if (!updated) {
+    return null;
+  }
+
+  notify({
+    event: "order.payment",
+    orderId: updated._id.toString(),
+    userId: updated.user.toString(),
+    invoice: updated.invoice,
+    paymentStatus: "paid",
+  });
+
+  return updated;
+};
+
 export const orderServices = {
   getCheckoutOptions,
   placeOrder,
@@ -601,4 +626,5 @@ export const orderServices = {
   cancelOrder,
   updateStatus,
   updatePaymentStatus,
+  markPaidByGateway,
 };
