@@ -4,7 +4,7 @@ import {
   ORDER_STATUS,
   PAYMENT_METHODS,
   PAYMENT_STATUSES,
-  SHIPPING_OPTIONS,
+  SHIPPING_OPTION_KEYS,
 } from "./order.constant";
 import {
   TOrder,
@@ -15,7 +15,7 @@ import {
   TOrderStatusEntry,
 } from "./order.interface";
 
-const SHIPPING_KEYS = SHIPPING_OPTIONS.map((option) => option.key);
+const SHIPPING_KEYS = [...SHIPPING_OPTION_KEYS];
 
 const orderOptionSchema = new Schema(
   {
@@ -112,8 +112,6 @@ const orderSchema = new Schema<TOrder>(
     subtotal: { type: Number, required: true, min: 0 },
     shippingCost: { type: Number, required: true, min: 0 },
     discount: { type: Number, default: 0, min: 0 },
-    // Null when no code was used. Set together with `discount`, which holds the
-    // money; this holds the terms that produced it.
     coupon: { type: orderCouponSchema, default: null },
     total: { type: Number, required: true, min: 0 },
     shippingOption: {

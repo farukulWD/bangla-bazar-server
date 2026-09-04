@@ -5,13 +5,10 @@ import {
   ORDER_STATUS,
   PAYMENT_METHODS,
   PAYMENT_STATUSES,
-  SHIPPING_OPTIONS,
+  SHIPPING_OPTION_KEYS,
 } from "./order.constant";
 
-const SHIPPING_KEYS = SHIPPING_OPTIONS.map((option) => option.key) as [
-  string,
-  ...string[],
-];
+const SHIPPING_KEYS = [...SHIPPING_OPTION_KEYS] as [string, ...string[]];
 
 const objectId = (label: string) =>
   z
@@ -34,7 +31,6 @@ const placeOrderValidationSchema = z.object({
     paymentMethod: z.enum(PAYMENT_METHODS, {
       error: "Choose a payment method",
     }),
-    // Optional, and only ever a code: what it is worth is settled server-side.
     couponCode: z
       .string()
       .trim()

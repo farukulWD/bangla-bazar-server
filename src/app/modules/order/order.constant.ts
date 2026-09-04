@@ -21,7 +21,6 @@ export const ORDER_CUSTOMER_CANCELLABLE: readonly TStatus[] = [
   "processing",
 ];
 
-// TODO: Should be dynamic
 export const PAYMENT_METHODS = ["cod", "sslcommerz"] as const;
 
 /** Methods whose money moves through a gateway before delivery, not at the door. */
@@ -34,31 +33,7 @@ export const PAYMENT_STATUSES = [
   "failed",
 ] as const;
 
-// TODO: Should be dynamic
-export const SHIPPING_OPTIONS = [
-  {
-    key: "standard",
-    label: "Standard Delivery",
-    note: "Delivered in 3-5 days",
-    fee: 60,
-    etaDays: 5,
-  },
-  {
-    key: "express",
-    label: "Express Delivery",
-    note: "Delivered within 24 hours",
-    fee: 120,
-    etaDays: 1,
-  },
-] as const;
-
-/** Waives the standard fee only; express is a real cost whatever the basket. */
-// TODO: Should be dynamic
-export const FREE_DELIVERY_OVER = 2000;
-
-/** Staff are alerted once a sale leaves a product at or below this. */
-// TODO: Should be dynamic
-export const LOW_STOCK_THRESHOLD = 5;
+export const SHIPPING_OPTION_KEYS = ["standard", "express"] as const;
 
 /** Where the legacy `invoice` counter left off (lib/auto-increment.js). */
 export const ORDER_INVOICE_SEED = 10000;

@@ -17,6 +17,7 @@
     "generate-password": "node script/script.js",
     "seed:superadmin": "tsx src/scripts/seedSuperAdmin.ts",
     "seed:roles": "tsx src/scripts/seedRoles.ts",
+    "seed:settings": "tsx src/scripts/seedSettings.ts",
     "sync:permissions": "tsx src/scripts/seedRoles.ts --sync",
     "migrate:products": "tsx src/scripts/migrateProducts.ts"
   },

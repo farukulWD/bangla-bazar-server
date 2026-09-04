@@ -6,6 +6,7 @@ export enum PermissionModule {
   Product = "product",
   Order = "order",
   Coupon = "coupon",
+  Settings = "settings",
 }
 
 export type TPermissionOf<M extends PermissionModule> =
@@ -80,6 +81,16 @@ export enum CouponPermission {
   DeleteCoupon = "can_delete_coupon",
 }
 
+/**
+ * Settings are a single stored document, so there is nothing to add or delete —
+ * only reading the panel and saving it. Publishing is not a concept here either:
+ * a saved setting is live.
+ */
+export enum SettingsPermission {
+  ViewSettings = "can_view_settings",
+  EditSettings = "can_edit_settings",
+}
+
 export const PERMISSION_REGISTRY = {
   [PermissionModule.User]: UserPermission,
   [PermissionModule.Role]: RolePermission,
@@ -88,6 +99,7 @@ export const PERMISSION_REGISTRY = {
   [PermissionModule.Product]: ProductPermission,
   [PermissionModule.Order]: OrderPermission,
   [PermissionModule.Coupon]: CouponPermission,
+  [PermissionModule.Settings]: SettingsPermission,
 } as const;
 
 export const PERMISSION_MODULE_LABELS: Record<PermissionModule, string> = {
@@ -98,6 +110,7 @@ export const PERMISSION_MODULE_LABELS: Record<PermissionModule, string> = {
   [PermissionModule.Product]: "Products",
   [PermissionModule.Order]: "Orders",
   [PermissionModule.Coupon]: "Coupons",
+  [PermissionModule.Settings]: "Settings",
 };
 
 export const PERMISSION_LABELS: Record<TAnyPermission, string> = {
@@ -136,6 +149,8 @@ export const PERMISSION_LABELS: Record<TAnyPermission, string> = {
   [CouponPermission.EditCoupon]: "Edit coupon",
   [CouponPermission.PublishCoupon]: "Publish or unpublish coupon",
   [CouponPermission.DeleteCoupon]: "Delete coupon",
+  [SettingsPermission.ViewSettings]: "View settings",
+  [SettingsPermission.EditSettings]: "Edit settings",
 };
 
 export const PERMISSION_MODULES = Object.values(PermissionModule);

@@ -20,8 +20,8 @@ import { emptyCart, priceCart } from "../cart/cart.services";
 import { notify } from "../notification/notification.emit";
 import { TOrderCoupon } from "./order.interface";
 import { couponServices } from "../coupon/coupon.services";
+import { getSettings } from "../settings/settings.cache";
 import {
-  FREE_DELIVERY_OVER,
   ORDER_CUSTOMER_CANCELLABLE,
   ORDER_EXPORT_MAX,
   ORDER_LIST_LIMIT_MAX,
@@ -30,7 +30,7 @@ import {
   ORDER_STATUS_FLOW,
   PAYMENT_METHODS,
   PAYMENT_STATUSES,
-  SHIPPING_OPTIONS,
+  SHIPPING_OPTION_KEYS,
 } from "./order.constant";
 import {
   TCheckoutOptions,
@@ -94,16 +94,33 @@ const fireAndForget = (work: Promise<unknown>): void => {
   void work.catch(() => undefined);
 };
 
-const getCheckoutOptions = (): TCheckoutOptions => ({
-  shipping: [...SHIPPING_OPTIONS],
-  paymentMethods: [...PAYMENT_METHODS],
-  freeDeliveryOver: FREE_DELIVERY_OVER,
-});
+const getCheckoutOptions = async (): Promise<TCheckoutOptions> => {
+  const { checkout } = await getSettings();
+
+  return {
+    shipping: SHIPPING_OPTION_KEYS.filter(
+      (key) => checkout.shipping[key]?.enabled,
+    ).map((key) => {
+      const { label, note, fee, etaDays } = checkout.shipping[key];
+      return { key, label, note, fee, etaDays };
+    }),
+    paymentMethods: PAYMENT_METHODS.filter(
+      (method) => checkout.paymentMethods[method]?.enabled,
+    ),
+    freeDeliveryOver: checkout.freeDeliveryOver,
+  };
+};
 
 const placeOrder = async (
   user: Types.ObjectId,
   payload: TPlaceOrder,
 ): Promise<TOrder> => {
+  const { checkout } = await getSettings();
+
+  if (!checkout.paymentMethods[payload.paymentMethod]?.enabled) {
+    throw badRequest("That payment method is not available", "paymentMethod");
+  }
+
   const session = await mongoose.startSession();
 
   let placed: TOrder | undefined;
@@ -154,6 +171,7 @@ const placeOrder = async (
       const { fee } = resolveShipping(
         payload.shippingOption,
         view.subtotal - discount,
+        checkout,
       );
       const items = toOrderItems(view);
 

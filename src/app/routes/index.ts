@@ -11,6 +11,7 @@ import { orderRoutes } from "../modules/order/order.routes";
 import { paymentRoutes } from "../modules/payment/payment.routes";
 import { productRoutes } from "../modules/product/product.routes";
 import { roleRoutes } from "../modules/roles/roles.routes";
+import { settingsRoutes } from "../modules/settings/settings.routes";
 import { userRoutes } from "../modules/users/user.routes";
 
 const router = Router();
@@ -27,6 +28,7 @@ const moduleRoutes = [
   { path: "/payments", route: paymentRoutes },
   { path: "/products", route: productRoutes },
   { path: "/roles", route: roleRoutes },
+  { path: "/settings", route: settingsRoutes },
   { path: "/users", route: userRoutes },
 ];
 

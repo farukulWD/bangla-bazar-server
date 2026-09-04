@@ -5,12 +5,8 @@ import AppError from "../../errors/AppError";
 import { TErrorSourse } from "../../interface/error.interface";
 import { TCartView } from "../cart/cart.interface";
 import { Product } from "../product/product.model";
-import {
-  FREE_DELIVERY_OVER,
-  ORDER_COUNTER_ID,
-  ORDER_INVOICE_SEED,
-  SHIPPING_OPTIONS,
-} from "./order.constant";
+import { TCheckoutSettings } from "../settings/settings.interface";
+import { ORDER_COUNTER_ID, ORDER_INVOICE_SEED } from "./order.constant";
 import { TOrder, TOrderItem, TShippingKey } from "./order.interface";
 import { OrderCounter } from "./order.model";
 
@@ -54,14 +50,15 @@ export const assertBasketIsBuyable = (view: TCartView): void => {
 export const resolveShipping = (
   key: TShippingKey,
   subtotal: number,
+  checkout: TCheckoutSettings,
 ): { fee: number } => {
-  const option = SHIPPING_OPTIONS.find((row) => row.key === key);
+  const option = checkout.shipping[key];
 
-  if (!option) {
+  if (!option || !option.enabled) {
     throw badRequest("That delivery option is not available", "shippingOption");
   }
 
-  const waived = option.key === "standard" && subtotal >= FREE_DELIVERY_OVER;
+  const waived = key === "standard" && subtotal >= checkout.freeDeliveryOver;
 
   return { fee: waived ? 0 : option.fee };
 };
@@ -104,15 +101,6 @@ export const nextInvoice = async (session: ClientSession): Promise<number> => {
   return counter.seq;
 };
 
-/**
- * Sells the basket. The `$gte` sits inside the filter so the check and the
- * decrement are a single operation — never read-then-write, which would oversell
- * under exactly the concurrency this guards against.
- *
- * Both stock levels move together: `product.stock` is the rollup of live variant
- * stock (`applyVariantDerived` in product.services), so touching only the variant
- * would let the two drift apart with nothing to notice.
- */
 export const decrementStock = async (
   items: TOrderItem[],
   session: ClientSession,

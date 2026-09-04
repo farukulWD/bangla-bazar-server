@@ -7,7 +7,7 @@ import { orderServices, TOrderScope } from "./order.services";
 import { ORDER_EXPORT_HEADER, orderToCsvRows, toInvoice } from "./order.utils";
 
 const getCheckoutOptions = catchAsync(async (_req, res) => {
-  const result = orderServices.getCheckoutOptions();
+  const result = await orderServices.getCheckoutOptions();
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
