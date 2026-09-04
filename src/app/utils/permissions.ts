@@ -15,6 +15,10 @@ export const holdsPermission = (
   if (user.userType === UserType.SuperAdmin) {
     return true;
   }
+
+  if (user.role && !user.role.isActive) {
+    return false;
+  }
   const granted = user.role?.modules?.find((entry) => entry.module === module)
     ?.permissions?.[permission as keyof typeof PERMISSION_LABELS];
   return granted === true;

@@ -154,7 +154,9 @@ const updateOrderStatus = catchAsync(async (req, res) => {
 });
 
 const updatePaymentStatus = catchAsync(async (req, res) => {
+  const caller = req.user as TAuthUser;
   const result = await orderServices.updatePaymentStatus(
+    caller,
     req.params.id,
     req.body.paymentStatus,
   );

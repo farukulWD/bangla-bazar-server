@@ -140,6 +140,57 @@ mounted at /api/v1/carts and /api/v1/orders.
             Unlike the product bulk export this is synchronous and needs no Cloudinary.
 
 
+Notifications:
+
+The notification module lives in src/app/modules/notification and is mounted at
+/api/v1/notifications. It is an in-app inbox only — no email, no SMS, no device push.
+Order mail is a separate concern and still goes out from src/app/queues/orders.worker.ts.
+
+    ⦁	A producer never writes a row. It calls notify() from
+            notification.emit.ts, which enqueues onto the `inbox` queue; the worker resolves
+            recipients, renders the copy and writes. notify() returns void, never throws and is
+            never awaited, so a dead Redis cannot fail a checkout. Call it *after* the
+            transaction commits, or a rolled-back write still rings the bell.
+    ⦁	What each event says lives in one place, notification.catalog.ts: the recipient,
+            the copy per audience, the client link, and the dedupe key. TNotifyInput is a
+            discriminated union with one member per event, so a call site that drifts from its
+            renderer is a compile error rather than a blank notification. A render that returns
+            null means that case needs no bell — order.status does this for `pending`.
+    ⦁	Audiences are `customer` and `staff`, and one account can hold both: a staff member
+            who places an order is the customer of that order and a staff recipient of it.
+            Every read is scoped by ?audience=, defaulting to the one matching the account
+            type, so the badge and the list can never disagree.
+    ⦁	Staff are addressed by permission, not by name — the recipient list is whoever
+            currently holds it (order events use can_view_orders, low stock can_view_products,
+            coupon expiry can_view_coupons). Whoever performed the action is filtered out of
+            their own staff fan-out. There is deliberately no `notification` permission module:
+            a notification is owned, so the routes take checkAuth alone and ownership is a
+            condition of every query.
+    ⦁	Delivery is idempotent. Every row carries a dedupeKey behind a unique
+            {user, audience, dedupeKey} index, so a BullMQ retry writes the same key twice and
+            the second insert is refused instead of ringing again. `audience` is part of that
+            key for the dual-role case above.
+    ⦁	Rows expire 90 days after they are written (a TTL index on createdAt). There is
+            deliberately no delete endpoint — that TTL is the whole cleanup story.
+    ⦁	Live delivery is Socket.IO, initialised in src/socket.ts against the same http
+            server. The handshake takes an access token in socket.handshake.auth.token, not a
+            cookie: the refresh cookie is scoped to /api/v1/auth and is never sent to
+            /socket.io/. It shares its verifier with checkAuth (auth.verify.ts), so a deleted,
+            deactivated or stale-token account cannot open a socket either. Clients join
+            user:<id>, and staff also join `staff`. The event is `notification:new` and carries
+            the same view the REST list returns. The check runs once, at connect — a password
+            change does not close an already-open socket.
+    ⦁	Live delivery is best effort on top of a row that is already committed. With no
+            socket server the notification still persists; only the ping is lost. There is no
+            Redis adapter yet, so a second server instance would not see the first one's
+            publishes — add @socket.io/redis-adapter before scaling out.
+    ⦁	The coupon-expiry warning is a BullMQ scheduler on the same queue, upserted on every
+            boot (COUPON_EXPIRY_SWEEP_CRON, daily at 03:00). It warns about coupons that are
+            visible, not deleted and within COUPON_EXPIRY_WARNING_DAYS of endTime. Re-running
+            it is free: the dedupe key carries the expiry date, so a coupon rings once per
+            expiry rather than once per sweep.
+
+
 Behaviour when Redis is down:
 
     ⦁	The API stays up. Routes that do not touch Redis are unaffected.
@@ -151,6 +202,10 @@ Behaviour when Redis is down:
             unlimited code guesses and unlimited SMS spend for the length of the outage.
     ⦁	After a store failure the limiter stays on memory for 30s before retrying Redis, so a
             dead server is not re-dialled on every request. It logs once per transition.
+    ⦁	Notifications stop being written and no bell rings, but nothing that produces one
+            fails: notify() is bounded and its failure is logged, not raised. The work is lost
+            rather than retried — the inbox is a convenience on top of state that is already
+            committed and readable over REST.
     ⦁	BullMQ reconnects forever rather than rejecting, so every enqueue and every limiter
             call is bounded by a timeout. Without those, a request would hang instead of
             degrading — which is what used to surface as an unhandledRejection and take the
