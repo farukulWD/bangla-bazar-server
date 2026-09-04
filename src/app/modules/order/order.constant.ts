@@ -22,7 +22,10 @@ export const ORDER_CUSTOMER_CANCELLABLE: readonly TStatus[] = [
 ];
 
 // TODO: Should be dynamic
-export const PAYMENT_METHODS = ["cod"] as const;
+export const PAYMENT_METHODS = ["cod", "sslcommerz"] as const;
+
+/** Methods whose money moves through a gateway before delivery, not at the door. */
+export const ONLINE_PAYMENT_METHODS = ["sslcommerz"] as const;
 
 export const PAYMENT_STATUSES = [
   "pending",

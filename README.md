@@ -140,6 +140,81 @@ mounted at /api/v1/carts and /api/v1/orders.
             Unlike the product bulk export this is synchronous and needs no Cloudinary.
 
 
+Payments (SSLCommerz):
+
+The payment module lives in src/app/modules/payment and is mounted at /api/v1/payments. It
+covers online payment only; cash on delivery still settles itself when an order is marked
+delivered.
+
+    ⦁	The order comes first. POST /api/v1/orders places the order exactly as it always
+            did — stock reserved in the placement transaction, paymentStatus "pending" — with
+            paymentMethod "sslcommerz". POST /api/v1/payments/init then opens a gateway session
+            for that order and returns a GatewayPageURL to redirect the customer to.
+            Init is the caller's own order or nothing: ownership is a condition of the query and
+            there is no staff bypass, so nobody starts a payment on someone else's order.
+    ⦁	Nothing the browser posts back is trusted. SSLCommerz redirects the customer to
+            success_url with a form body saying status=VALID and an amount — an unauthenticated
+            cross-site POST that anyone can forge. It is treated as nothing more than a hint
+            that a val_id may now exist. The only thing that marks an order paid is our own
+            outbound call to the validator API, authenticated with the store password.
+            Paid needs all four: the validator says VALID or VALIDATED, and the tran_id, the
+            currency and the amount all match the Payment row. VALIDATED is a success too — it
+            is what the loser of the redirect/IPN race sees.
+    ⦁	The amount is compared against the snapshot taken at init, never against
+            store_amount. store_amount is what SSLCommerz will settle after their fee and is
+            legitimately smaller than what was charged; comparing against it accepts every
+            payment at a discount.
+    ⦁	A validated payment whose figures disagree becomes "mismatched", not "failed". The
+            order stays unpaid, the disagreeing field is logged, and a human resolves it —
+            auto-failing would destroy the evidence.
+    ⦁	The success redirect and the IPN run the same settle concurrently and are made safe
+            by a compare-and-set, not a read-then-write: the update only matches a payment still
+            in "initiated" or "pending", so the loser changes nothing and reports the state the
+            winner left. The same guard is why a late cancel or fail callback cannot downgrade a
+            payment that already settled as paid. tran_id carries a unique index, and val_id a
+            unique partial one, so one gateway transaction can never settle two rows.
+    ⦁	tran_id is random, never the invoice number. Invoices are sequential and printed on
+            customer-facing pages, and the callback routes cannot be authenticated, so the id
+            itself has to be the unguessable part.
+    ⦁	SSL_IPN_ALLOWED_IPS restricts the IPN endpoint to the addresses in the merchant
+            panel, and fails closed when empty. It is defence in depth only — the source IP is
+            read from X-Forwarded-For and is therefore spoofable. SSL_IPN_ALLOW_ANY_IP=true
+            waives it for tunnelled local development and must be false in production; the
+            server logs a warning if it is not. Rejections log the offending address so it can
+            be pasted straight into the env.
+    ⦁	SERVER_PUBLIC_URL is where the gateway reaches us, so it must be publicly resolvable
+            — in development a tunnel (cloudflared tunnel --url http://localhost:5055). config
+            reads process.env once at import, so changing it needs a server restart.
+    ⦁	Every attempt is its own Payment row; there is deliberately no unique index on the
+            order. A customer who cancels at the gateway keeps an order that is still
+            paymentStatus "pending" and can simply pay again, and only the attempt is marked
+            cancelled — which also stops a back-button press ringing "your payment failed".
+            paymentStatus "failed" stays a deliberate staff action through
+            PATCH /api/v1/orders/:id/payment.
+    ⦁	If the money is collected but the order refuses the transition — already paid by
+            another attempt, or cancelled underneath us — the payment is flagged duplicate:true
+            and logged rather than rolled back. That is a possible double collection and needs a
+            person, probably a refund.
+    ⦁	Known gap: an abandoned payment holds stock. placeOrder decrements stock whatever the
+            payment method, so a customer who opens a gateway page and never pays leaves a
+            pending order sitting on that stock, and nothing reclaims it. Triage it with
+            GET /api/v1/payments?status=pending&to=<yesterday> and cancel through
+            POST /api/v1/orders/:id/cancel, which restores stock correctly. The "expired" state
+            and PAYMENT_EXPIRE_AFTER_MINUTES exist so a sweeper can be added additively; it was
+            left out because the timeout is a product decision (a bKash OTP round-trip is
+            genuinely minutes) and because cancelOrder needs a caller to attribute the change
+            to, which a scheduled job does not have.
+    ⦁	Admin surfaces — GET /api/v1/payments and /:id — are gated by can_view_orders rather
+            than a permission of their own. A payment is a facet of an order, and anyone who can
+            already read every order's payment status gains nothing from the tran_id behind it.
+            A PermissionModule.Payment belongs with gateway-initiated refunds, which are a
+            genuinely new capability and are not implemented. Customers read their own through
+            GET /api/v1/payments/my and /my/:orderId, which return a narrower view: no tran_id,
+            no gateway identifiers, and never the session key.
+    ⦁	Refunds are not automated. Marking an order refunded is still
+            PATCH /api/v1/orders/:id/payment; the money is moved in the SSLCommerz panel.
+
+
 Notifications:
 
 The notification module lives in src/app/modules/notification and is mounted at

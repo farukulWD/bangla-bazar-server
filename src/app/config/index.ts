@@ -35,6 +35,15 @@ export default {
   refresh_cookie_max_age_ms:
     Number(process.env.REFRESH_COOKIE_MAX_AGE_MS) || 30 * 24 * 60 * 60 * 1000,
   client_url: process.env.CLIENT_URL || "http://localhost:3000",
+  server_public_url: process.env.SERVER_PUBLIC_URL || "",
+  ssl_store_id: process.env.STORE_ID || "",
+  ssl_store_password: process.env.STORE_PASSWORD || "",
+  ssl_is_live: process.env.SSL_IS_LIVE === "true",
+  ssl_ipn_allowed_ips: (process.env.SSL_IPN_ALLOWED_IPS || "")
+    .split(",")
+    .map((ip) => ip.trim())
+    .filter(Boolean),
+  ssl_ipn_allow_any_ip: process.env.SSL_IPN_ALLOW_ANY_IP === "true",
   // Read only by `npm run seed:superadmin` — no HTTP route can create a superAdmin.
   superadmin_name: process.env.SUPERADMIN_NAME || "",
   superadmin_email: process.env.SUPERADMIN_EMAIL || "",
