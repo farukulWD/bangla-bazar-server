@@ -5,12 +5,15 @@ import QueryBuilder from "../../builder/queryBuilder";
 import AppError from "../../errors/AppError";
 import { TPagination } from "../../interface/common";
 import { logger } from "../../shared/logger";
+import { formatMoney } from "../../utils/money";
 import { TAuthUser } from "../auth/auth.interface";
 import { ONLINE_PAYMENT_METHODS } from "../order/order.constant";
 import { TOrder } from "../order/order.interface";
 import { Order } from "../order/order.model";
 import { orderServices } from "../order/order.services";
 import { badRequest, parseDate } from "../order/order.utils";
+import { getBaseMoneyFormat } from "../currency/currency.cache";
+import { GATEWAY_CURRENCY_CODE } from "../currency/currency.constant";
 import {
   PAYMENT_CALLBACK_LOG_MAX,
   PAYMENT_FALLBACK_EMAIL,
@@ -120,9 +123,18 @@ const initPayment = async (
     );
   }
 
+  const currency = await getBaseMoneyFormat();
+
+  if (currency.code !== GATEWAY_CURRENCY_CODE) {
+    throw badRequest(
+      `Online payment is unavailable while the shop prices in ${currency.code}`,
+      "paymentMethod",
+    );
+  }
+
   if (order.total < SSL_MIN_AMOUNT) {
     throw badRequest(
-      `Online payment needs at least Tk ${SSL_MIN_AMOUNT}`,
+      `Online payment needs at least ${formatMoney(SSL_MIN_AMOUNT, currency)}`,
       "total",
     );
   }
@@ -134,7 +146,7 @@ const initPayment = async (
     provider: "sslcommerz",
     tranId: newTranId(),
     amount: order.total,
-    currency: "BDT",
+    currency: currency.code,
     status: "initiated",
     initiatedAt: new Date(),
   });

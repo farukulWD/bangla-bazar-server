@@ -15,6 +15,7 @@ import {
   orderPlacedEmail,
   orderStatusEmail,
 } from "../templates/orderEmail";
+import { formatMoney } from "../utils/money";
 import { sendEmail } from "../utils/sendEmail";
 import { sendSms } from "../utils/sendSms";
 import {
@@ -59,6 +60,7 @@ const emailParams = (order: TOrder, name: string): TOrderEmailParams => ({
   discount: order.discount,
   couponCode: order.coupon?.code,
   total: order.total,
+  currency: order.currency,
 });
 
 /**
@@ -99,7 +101,7 @@ const runOrderPlaced = async (payload: TOrderPlacedJob) => {
     content.subject,
     content.html,
     content.text,
-    `Bangla Bazar: order #${order.invoice} confirmed. Total Tk ${order.total}.`,
+    `Bangla Bazar: order #${order.invoice} confirmed. Total ${formatMoney(order.total)}.`,
   );
 
   return { notified: true };

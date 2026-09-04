@@ -10,6 +10,7 @@ import {
   TOrder,
   TOrderAddress,
   TOrderCoupon,
+  TOrderCurrency,
   TOrderCounter,
   TOrderItem,
   TOrderStatusEntry,
@@ -45,6 +46,18 @@ const orderItemSchema = new Schema<TOrderItem>(
     originalPrice: { type: Number, required: true, min: 0 },
     qty: { type: Number, required: true, min: 1 },
     lineTotal: { type: Number, required: true, min: 0 },
+  },
+  { _id: false },
+);
+
+const orderCurrencySchema = new Schema<TOrderCurrency>(
+  {
+    code: { type: String, required: true, uppercase: true },
+    symbol: { type: String, required: true },
+    symbolPosition: { type: String, enum: ["before", "after"], default: "before" },
+    decimals: { type: Number, required: true, min: 0, max: 4 },
+    thousandSeparator: { type: String, default: "," },
+    decimalSeparator: { type: String, default: "." },
   },
   { _id: false },
 );
@@ -114,6 +127,7 @@ const orderSchema = new Schema<TOrder>(
     discount: { type: Number, default: 0, min: 0 },
     coupon: { type: orderCouponSchema, default: null },
     total: { type: Number, required: true, min: 0 },
+    currency: { type: orderCurrencySchema, required: true },
     shippingOption: {
       type: String,
       lowercase: true,

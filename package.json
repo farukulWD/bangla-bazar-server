@@ -18,8 +18,10 @@
     "seed:superadmin": "tsx src/scripts/seedSuperAdmin.ts",
     "seed:roles": "tsx src/scripts/seedRoles.ts",
     "seed:settings": "tsx src/scripts/seedSettings.ts",
+    "seed:currencies": "tsx src/scripts/seedCurrencies.ts",
     "sync:permissions": "tsx src/scripts/seedRoles.ts --sync",
-    "migrate:products": "tsx src/scripts/migrateProducts.ts"
+    "migrate:products": "tsx src/scripts/migrateProducts.ts",
+    "migrate:order-currency": "tsx src/scripts/migrateOrderCurrency.ts"
   },
   "author": "Bangla Bazar",
   "license": "Regular",

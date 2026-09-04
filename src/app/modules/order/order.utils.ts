@@ -235,6 +235,7 @@ export const ORDER_EXPORT_COLUMNS = [
   "coupon_code",
   "order_discount",
   "order_total",
+  "order_currency",
 ] as const;
 
 export const ORDER_EXPORT_HEADER = csvRow([...ORDER_EXPORT_COLUMNS]);
@@ -270,6 +271,7 @@ export const orderToCsvRows = (order: TOrder): string[] =>
       first ? (order.coupon?.code ?? "") : "",
       first ? order.discount : "",
       first ? order.total : "",
+      first ? (order.currency?.code ?? "") : "",
     ]);
   });
 
@@ -291,6 +293,7 @@ export const toInvoice = (order: TOrder) => ({
   discount: order.discount,
   coupon: order.coupon,
   total: order.total,
+  currency: order.currency,
   shippingOption: order.shippingOption,
   paymentMethod: order.paymentMethod,
   paymentStatus: order.paymentStatus,

@@ -10,6 +10,7 @@ import {
   queueOrderPlaced,
   queueOrderStatus,
 } from "../../queues/orders.queue";
+import { roundMoney } from "../../utils/money";
 import { hasPermission } from "../../utils/permissions";
 import { TAddress } from "../address/address.interface";
 import { Address } from "../address/address.model";
@@ -20,6 +21,7 @@ import { emptyCart, priceCart } from "../cart/cart.services";
 import { notify } from "../notification/notification.emit";
 import { TOrderCoupon } from "./order.interface";
 import { couponServices } from "../coupon/coupon.services";
+import { getBaseMoneyFormat } from "../currency/currency.cache";
 import { getSettings } from "../settings/settings.cache";
 import {
   ORDER_CUSTOMER_CANCELLABLE,
@@ -117,6 +119,10 @@ const placeOrder = async (
 ): Promise<TOrder> => {
   const { checkout } = await getSettings();
 
+  // Read before the transaction: the snapshot only has to be the currency the
+  // customer was quoted in, and a rate change mid-checkout is not worth a retry.
+  const currency = await getBaseMoneyFormat();
+
   if (!checkout.paymentMethods[payload.paymentMethod]?.enabled) {
     throw badRequest("That payment method is not available", "paymentMethod");
   }
@@ -195,7 +201,8 @@ const placeOrder = async (
             shippingCost: fee,
             discount,
             coupon,
-            total: view.subtotal + fee - discount,
+            total: roundMoney(view.subtotal + fee - discount, currency.decimals),
+            currency,
             shippingOption: payload.shippingOption,
             paymentMethod: payload.paymentMethod,
             paymentStatus: "pending",
