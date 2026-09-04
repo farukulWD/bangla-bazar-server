@@ -1,6 +1,7 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Application } from "express";
+import helmet from "helmet";
 import config from "./app/config";
 import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
 import notFound from "./app/middleware/notFound";
@@ -9,8 +10,8 @@ import router from "./app/routes";
 
 const app: Application = express();
 
-// `credentials` and a concrete origin, not `*`: without both the browser will not
-// send the refresh cookie back to /api/v1/auth.
+app.use(helmet());
+
 app.use(cors({ origin: config.client_url, credentials: true }));
 app.use(express.json({ limit: "4mb" }));
 app.use(cookieParser());
