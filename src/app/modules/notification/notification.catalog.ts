@@ -4,6 +4,7 @@ import {
   PermissionModule,
   ProductPermission,
 } from "../../constants/permissions";
+import { formatMoney } from "../../utils/money";
 import { TOrderStatus, TPaymentStatus } from "../order/order.interface";
 import {
   TCatalog,
@@ -14,7 +15,6 @@ import {
 
 const invoiceCode = (invoice: number): string => `#${invoice}`;
 
-const taka = (value: number): string => `Tk ${value.toLocaleString("en-US")}`;
 const today = (): string => new Date().toISOString().slice(0, 10);
 
 const orders: TStaffRoute = {
@@ -82,7 +82,7 @@ export const NOTIFICATION_CATALOG: TCatalog = {
       claimedRecipient: (input) => input.userId,
       render: (input): TRendered => ({
         title: "Order placed",
-        body: `Order ${invoiceCode(input.invoice)} — ${taka(input.total)}. We will confirm it shortly.`,
+        body: `Order ${invoiceCode(input.invoice)} — ${formatMoney(input.total)}. We will confirm it shortly.`,
         link: `/orders/${input.orderId}`,
         subject: orderSubject(input.orderId, input.invoice),
       }),
@@ -91,7 +91,7 @@ export const NOTIFICATION_CATALOG: TCatalog = {
       route: orders,
       render: (input): TRendered => ({
         title: "New order placed",
-        body: `Order ${invoiceCode(input.invoice)} — ${taka(input.total)}.`,
+        body: `Order ${invoiceCode(input.invoice)} — ${formatMoney(input.total)}.`,
         link: `/admin/orders/${input.orderId}`,
         subject: orderSubject(input.orderId, input.invoice),
       }),

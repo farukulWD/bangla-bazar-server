@@ -6,6 +6,7 @@ export enum PermissionModule {
   Product = "product",
   Order = "order",
   Coupon = "coupon",
+  Currency = "currency",
   Settings = "settings",
 }
 
@@ -82,6 +83,19 @@ export enum CouponPermission {
 }
 
 /**
+ * Which currency the shop prices in is a money decision, not a display tweak, so
+ * setting the base is its own permission rather than part of editing a row.
+ */
+export enum CurrencyPermission {
+  ViewCurrencies = "can_view_currencies",
+  AddCurrency = "can_add_currency",
+  EditCurrency = "can_edit_currency",
+  PublishCurrency = "can_publish_currency",
+  SetBaseCurrency = "can_set_base_currency",
+  DeleteCurrency = "can_delete_currency",
+}
+
+/**
  * Settings are a single stored document, so there is nothing to add or delete —
  * only reading the panel and saving it. Publishing is not a concept here either:
  * a saved setting is live.
@@ -99,6 +113,7 @@ export const PERMISSION_REGISTRY = {
   [PermissionModule.Product]: ProductPermission,
   [PermissionModule.Order]: OrderPermission,
   [PermissionModule.Coupon]: CouponPermission,
+  [PermissionModule.Currency]: CurrencyPermission,
   [PermissionModule.Settings]: SettingsPermission,
 } as const;
 
@@ -110,6 +125,7 @@ export const PERMISSION_MODULE_LABELS: Record<PermissionModule, string> = {
   [PermissionModule.Product]: "Products",
   [PermissionModule.Order]: "Orders",
   [PermissionModule.Coupon]: "Coupons",
+  [PermissionModule.Currency]: "Currency",
   [PermissionModule.Settings]: "Settings",
 };
 
@@ -149,6 +165,12 @@ export const PERMISSION_LABELS: Record<TAnyPermission, string> = {
   [CouponPermission.EditCoupon]: "Edit coupon",
   [CouponPermission.PublishCoupon]: "Publish or unpublish coupon",
   [CouponPermission.DeleteCoupon]: "Delete coupon",
+  [CurrencyPermission.ViewCurrencies]: "View currencies",
+  [CurrencyPermission.AddCurrency]: "Add currency",
+  [CurrencyPermission.EditCurrency]: "Edit currency and its rate",
+  [CurrencyPermission.PublishCurrency]: "Publish or unpublish currency",
+  [CurrencyPermission.SetBaseCurrency]: "Change the base currency",
+  [CurrencyPermission.DeleteCurrency]: "Delete currency",
   [SettingsPermission.ViewSettings]: "View settings",
   [SettingsPermission.EditSettings]: "Edit settings",
 };

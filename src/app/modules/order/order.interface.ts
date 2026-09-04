@@ -48,6 +48,15 @@ export type TOrderCoupon = {
   discountValue: number;
 };
 
+export type TOrderCurrency = {
+  code: string;
+  symbol: string;
+  symbolPosition: "before" | "after";
+  decimals: number;
+  thousandSeparator: string;
+  decimalSeparator: string;
+};
+
 export type TOrderStatusEntry = {
   status: TOrderStatus;
   at: Date;
@@ -65,6 +74,7 @@ export type TOrder = {
   discount: number;
   coupon: TOrderCoupon | null;
   total: number;
+  currency: TOrderCurrency;
   shippingOption: TShippingKey;
   paymentMethod: TPaymentMethod;
   paymentStatus: TPaymentStatus;

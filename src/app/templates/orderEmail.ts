@@ -1,3 +1,4 @@
+import { TMoneyFormat, formatMoney } from "../utils/money";
 import {
   AMBER,
   BODY_FONT,
@@ -31,6 +32,8 @@ export type TOrderEmailParams = {
   discount: number;
   couponCode?: string;
   total: number;
+
+  currency?: TMoneyFormat;
 };
 
 export type TOrderEmailCopy = {
@@ -41,9 +44,6 @@ export type TOrderEmailCopy = {
   message: string;
   subject: string;
 };
-
-const money = (amount: number): string =>
-  `Tk ${amount.toLocaleString("en-BD")}`;
 
 const optionsLabel = (line: TOrderEmailLine): string =>
   line.options
@@ -60,6 +60,9 @@ export const orderEmail = (
   params: TOrderEmailParams,
   copy: TOrderEmailCopy,
 ): TEmailContent => {
+  const money = (amount: number): string =>
+    formatMoney(amount, params.currency);
+
   const trimmedName = params.name.trim();
   const greeting = trimmedName ? `Hello ${escapeHtml(trimmedName)},` : "Hello,";
   const year = new Date().getFullYear();
