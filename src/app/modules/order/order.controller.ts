@@ -3,7 +3,7 @@ import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { TAuthUser } from "../auth/auth.interface";
-import { orderServices } from "./order.services";
+import { orderServices, TOrderScope } from "./order.services";
 import { ORDER_EXPORT_HEADER, orderToCsvRows, toInvoice } from "./order.utils";
 
 const getCheckoutOptions = catchAsync(async (_req, res) => {
@@ -17,62 +17,73 @@ const getCheckoutOptions = catchAsync(async (_req, res) => {
   });
 });
 
-const getOrders = catchAsync(async (req, res) => {
-  const caller = req.user as TAuthUser;
-  const { data, pagination } = await orderServices.listOrders(
-    caller,
-    req.query,
-  );
+const listOrders = (scope: TOrderScope) =>
+  catchAsync(async (req, res) => {
+    const caller = req.user as TAuthUser;
+    const { data, pagination } = await orderServices.listOrders(
+      caller,
+      req.query,
+      scope,
+    );
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Orders fetched successfully",
-    data,
-    pagination,
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Orders fetched successfully",
+      data,
+      pagination,
+    });
   });
-});
 
-const getOrderStats = catchAsync(async (req, res) => {
-  const caller = req.user as TAuthUser;
-  const result = await orderServices.getStats(caller);
+const orderStats = (scope: TOrderScope) =>
+  catchAsync(async (req, res) => {
+    const caller = req.user as TAuthUser;
+    const result = await orderServices.getStats(caller, scope);
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Order stats fetched successfully",
-    data: result,
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Order stats fetched successfully",
+      data: result,
+    });
   });
-});
 
-const exportOrders = catchAsync(async (req, res) => {
-  const caller = req.user as TAuthUser;
+const exportOrders = (scope: TOrderScope) =>
+  catchAsync(async (req, res) => {
+    const caller = req.user as TAuthUser;
 
-  const { cursor } = await orderServices.exportOrders(caller, req.query);
+    const { cursor } = await orderServices.exportOrders(
+      caller,
+      req.query,
+      scope,
+    );
 
-  const filename = `orders-${new Date().toISOString().slice(0, 10)}.csv`;
+    const filename = `orders-${new Date().toISOString().slice(0, 10)}.csv`;
 
-  res.setHeader("Content-Type", "text/csv; charset=utf-8");
-  res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
 
-  res.write("\uFEFF");
-  res.write(ORDER_EXPORT_HEADER);
+    res.write("\uFEFF");
+    res.write(ORDER_EXPORT_HEADER);
 
-  try {
-    for await (const order of cursor) {
-      for (const row of orderToCsvRows(order)) {
-        if (!res.write(row)) {
-          await new Promise((resolve) => res.once("drain", resolve));
+    try {
+      for await (const order of cursor) {
+        for (const row of orderToCsvRows(order)) {
+          // Respect backpressure: a slow client must not make us buffer the whole
+          // export in the socket.
+          if (!res.write(row)) {
+            await new Promise((resolve) => res.once("drain", resolve));
+          }
         }
       }
-    }
 
-    res.end();
-  } catch (error) {
-    await cursor.close().catch(() => undefined);
-    res.destroy(error as Error);
-  }
-});
+      res.end();
+    } catch (error) {
+      // The headers are long gone, so there is no status left to change.
+      await cursor.close().catch(() => undefined);
+      res.destroy(error as Error);
+    }
+  });
 
 const getOrderById = catchAsync(async (req, res) => {
   const caller = req.user as TAuthUser;
@@ -158,9 +169,14 @@ const updatePaymentStatus = catchAsync(async (req, res) => {
 
 export const orderController = {
   getCheckoutOptions,
-  getOrders,
-  getOrderStats,
-  exportOrders,
+  // Customer-facing: always the caller's own orders.
+  getMyOrders: listOrders("mine"),
+  getMyOrderStats: orderStats("mine"),
+  exportMyOrders: exportOrders("mine"),
+  // Staff-facing: gated by ViewOrders on the route.
+  getOrders: listOrders("store"),
+  getOrderStats: orderStats("store"),
+  exportOrders: exportOrders("store"),
   getOrderById,
   getOrderInvoice,
   placeOrder,

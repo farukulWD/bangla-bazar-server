@@ -65,6 +65,14 @@ const changedElsewhere = () =>
 const canSeeEveryOrder = (caller: TAuthUser): boolean =>
   hasPermission(caller, PermissionModule.Order, OrderPermission.ViewOrders);
 
+export type TOrderScope = "mine" | "store";
+
+const resolveScope = (
+  caller: TAuthUser,
+  requested: TOrderScope,
+): TOrderScope =>
+  requested === "store" && canSeeEveryOrder(caller) ? "store" : "mine";
+
 const STAFF_POPULATE = [{ path: "user", select: "name email phone" }];
 
 const isMissingTransactionSupport = (error: unknown): boolean =>
@@ -211,8 +219,9 @@ const placeOrder = async (
 const buildFilter = (
   caller: TAuthUser,
   query: Record<string, unknown>,
-  isStaff: boolean,
+  scope: TOrderScope,
 ): QueryFilter<TOrder> => {
+  const isStaff = scope === "store";
   const filter: QueryFilter<TOrder> = {};
 
   if (isStaff) {
@@ -275,8 +284,10 @@ const buildFilter = (
 const listOrders = async (
   caller: TAuthUser,
   query: Record<string, unknown>,
+  requested: TOrderScope,
 ): Promise<{ data: TOrder[]; pagination: TPagination }> => {
-  const isStaff = canSeeEveryOrder(caller);
+  const scope = resolveScope(caller, requested);
+  const isStaff = scope === "store";
 
   const page = Math.max(1, Number(query.page) || 1);
   const limit = Math.min(
@@ -285,7 +296,7 @@ const listOrders = async (
   );
 
   const orderQuery = new QueryBuilder(
-    Order.find(buildFilter(caller, query, isStaff)),
+    Order.find(buildFilter(caller, query, scope)),
     { ...query, page, limit },
   )
     .filter(ORDER_QUERY_CONTROL_KEYS)
@@ -312,8 +323,9 @@ const listOrders = async (
 const exportOrders = async (
   caller: TAuthUser,
   query: Record<string, unknown>,
+  requested: TOrderScope,
 ) => {
-  const filter = buildFilter(caller, query, canSeeEveryOrder(caller));
+  const filter = buildFilter(caller, query, resolveScope(caller, requested));
   const total = await Order.countDocuments(filter);
 
   if (total > ORDER_EXPORT_MAX) {
@@ -346,8 +358,11 @@ const getOrder = async (caller: TAuthUser, id: string): Promise<TOrder> => {
   return order;
 };
 
-const getStats = async (caller: TAuthUser): Promise<TOrderStats> => {
-  const isStaff = canSeeEveryOrder(caller);
+const getStats = async (
+  caller: TAuthUser,
+  requested: TOrderScope,
+): Promise<TOrderStats> => {
+  const isStaff = resolveScope(caller, requested) === "store";
 
   const rows = await Order.aggregate<{ _id: TOrderStatus; count: number }>([
     { $match: isStaff ? {} : { user: caller._id } },

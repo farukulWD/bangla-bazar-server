@@ -117,9 +117,20 @@ mounted at /api/v1/carts and /api/v1/orders.
             phone and address, and a public object-store URL for that is both enumerable
             (invoice numbers are sequential) and hard to retract, since a deleted object can
             still be served from a CDN edge for as long as it stays cached.
+    ⦁	Customers read their own orders through the /my surfaces — GET /api/v1/orders/my,
+            /my/stats and /my/export. These are always scoped to the caller, so a staff member
+            hitting them sees their own orders rather than the store's.
+            The unprefixed GET /api/v1/orders, /stats and /export are store-wide and gated by
+            can_view_orders. Scope is passed in from the route rather than inferred from the
+            caller, so the routes file shows which surface serves whom; the service re-checks
+            the permission anyway, so dropping a gate downgrades the answer to the caller's own
+            orders instead of leaking the store.
+            GET /api/v1/orders/:id and /:id/invoice stay dual — a single order is unambiguous,
+            and ownership is a condition of the query. A customer asking for someone else's
+            order gets 404, not 403: saying "forbidden" would confirm it exists.
     ⦁	GET /api/v1/orders/export downloads a CSV. It takes the same query parameters as
             GET /api/v1/orders and splits by the same rule: staff export everything the filter
-            selects, a customer exports only their own orders. Rows are streamed off a cursor,
+            selects, /my/export covers a customer's own. Rows are streamed off a cursor,
             so memory does not grow with the export; above ORDER_EXPORT_MAX matching orders it
             refuses with a 400 rather than returning a silently truncated file.
             One row per line item. Order-level totals appear on each order's first row only,

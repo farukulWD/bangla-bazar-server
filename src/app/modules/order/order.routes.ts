@@ -8,17 +8,38 @@ import { orderController } from "./order.controller";
 import { orderValidation } from "./order.validation";
 
 const router = Router();
-// TODO: Add permission checks for all routes that require them
 
 const can = (permission: OrderPermission) =>
   checkPermission(PermissionModule.Order, permission);
 
 router.get("/options", checkAuth, orderController.getCheckoutOptions);
-router.get("/stats", checkAuth, orderController.getOrderStats);
 
-router.get("/", checkAuth, orderController.getOrders);
+// Customer surfaces. Always scoped to the caller, whoever they are — a staff
+// member hitting these sees their own orders, not the store's.
+router.get("/my", checkAuth, orderController.getMyOrders);
+router.get("/my/stats", checkAuth, orderController.getMyOrderStats);
+router.get("/my/export", checkAuth, orderController.exportMyOrders);
 
-router.get("/export", checkAuth, orderController.exportOrders);
+// Store-wide surfaces. These are the ones that can return every customer's order,
+// so they are gated here rather than inside the service.
+router.get(
+  "/",
+  checkAuth,
+  can(OrderPermission.ViewOrders),
+  orderController.getOrders,
+);
+router.get(
+  "/stats",
+  checkAuth,
+  can(OrderPermission.ViewOrders),
+  orderController.getOrderStats,
+);
+router.get(
+  "/export",
+  checkAuth,
+  can(OrderPermission.ViewOrders),
+  orderController.exportOrders,
+);
 
 router.post(
   "/",
@@ -27,6 +48,8 @@ router.post(
   orderController.placeOrder,
 );
 
+// A single order is unambiguous, so this one stays dual: the owner or staff with
+// ViewOrders, enforced as a condition of the query in getOrder.
 router.get(
   "/:id",
   checkAuth,
