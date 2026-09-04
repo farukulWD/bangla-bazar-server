@@ -27,13 +27,13 @@ class QueryBuilder<T> {
     return this;
   }
 
-  // excludeFields is not automatic: a control key you forget to name here reaches Mongo as a
-  // field filter and the query silently returns nothing.
   filter(excludeFields: string[]) {
     const queryObj = { ...this.query };
     excludeFields.forEach((el) => delete queryObj[el]);
 
-    this.modelQuery = this.modelQuery.find(queryObj as QueryFilter<T>);
+    if (Object.keys(queryObj).length) {
+      this.modelQuery = this.modelQuery.and([queryObj as QueryFilter<T>]);
+    }
 
     return this;
   }

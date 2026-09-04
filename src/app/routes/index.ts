@@ -6,6 +6,7 @@ import { authRoutes } from "../modules/auth/auth.routes";
 import { cartRoutes } from "../modules/cart/cart.routes";
 import { categoryRoutes } from "../modules/category/category.routes";
 import { couponRoutes } from "../modules/coupon/coupon.routes";
+import { notificationRoutes } from "../modules/notification/notification.routes";
 import { orderRoutes } from "../modules/order/order.routes";
 import { productRoutes } from "../modules/product/product.routes";
 import { roleRoutes } from "../modules/roles/roles.routes";
@@ -20,6 +21,7 @@ const moduleRoutes = [
   { path: "/carts", route: cartRoutes },
   { path: "/category", route: categoryRoutes },
   { path: "/coupons", route: couponRoutes },
+  { path: "/notifications", route: notificationRoutes },
   { path: "/orders", route: orderRoutes },
   { path: "/products", route: productRoutes },
   { path: "/roles", route: roleRoutes },

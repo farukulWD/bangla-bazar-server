@@ -1,11 +1,13 @@
 import { Worker } from "bullmq";
 import { LOW_STOCK_THRESHOLD } from "../modules/order/order.constant";
+import { STAFF_ROUTES } from "../modules/notification/notification.catalog";
+import { notify } from "../modules/notification/notification.emit";
+import { staffContacts } from "../modules/notification/notification.recipients";
 import { TOrder } from "../modules/order/order.interface";
 import { Order } from "../modules/order/order.model";
 import { TProductResponse } from "../modules/product/product.interface";
 import { Product } from "../modules/product/product.model";
 import { TUser } from "../modules/users/user.interface";
-import { STAFF_USER_TYPES } from "../modules/users/user.interface";
 import { User } from "../modules/users/user.model";
 import { logger } from "../shared/logger";
 import {
@@ -29,10 +31,6 @@ import { queueConnection } from "./queue.config";
 const loadOrder = async (orderId: string): Promise<TOrder | null> =>
   Order.findById(orderId).lean<TOrder | null>();
 
-/**
- * The delivery contact is the right person to tell about a delivery, so the address
- * wins; the account is the fallback for an address that carries no email.
- */
 const contactsFor = async (
   order: TOrder,
 ): Promise<{ email: string; phone: string; name: string }> => {
@@ -63,7 +61,7 @@ const emailParams = (order: TOrder, name: string): TOrderEmailParams => ({
   total: order.total,
 });
 
-const notify = async (
+const sendToContacts = async (
   to: { email: string; phone: string },
   subject: string,
   html: string,
@@ -89,7 +87,7 @@ const runOrderPlaced = async (payload: TOrderPlacedJob) => {
   const contacts = await contactsFor(order);
   const content = orderPlacedEmail(emailParams(order, contacts.name));
 
-  await notify(
+  await sendToContacts(
     contacts,
     content.subject,
     content.html,
@@ -118,7 +116,7 @@ const runOrderStatus = async (payload: TOrderStatusJob) => {
     return { skipped: `no notice for status "${payload.status}"` };
   }
 
-  await notify(
+  await sendToContacts(
     contacts,
     content.subject,
     content.html,
@@ -142,14 +140,10 @@ const runLowStock = async (payload: TLowStockJob) => {
     return { low: 0 };
   }
 
-  const staff = await User.find({
-    userType: { $in: STAFF_USER_TYPES },
-    status: "active",
-    isDeleted: { $ne: true },
-    email: { $nin: [null, ""] },
-  })
-    .select("email")
-    .lean<Pick<TUser, "email">[]>();
+  const staff = await staffContacts(STAFF_ROUTES.products);
+  const addresses = staff
+    .map((member) => member.email)
+    .filter((email): email is string => Boolean(email));
 
   const lines = products.map(
     (product) =>
@@ -158,25 +152,31 @@ const runLowStock = async (payload: TLowStockJob) => {
 
   logger.warn(`Low stock: ${lines.join("; ")}`);
 
+  for (const product of products) {
+    notify({
+      event: "product.low_stock",
+      productId: product._id.toString(),
+      title: product.title,
+      sku: product.sku,
+      stock: product.stock,
+    });
+  }
+
   const text = ["These products are running low:", "", ...lines].join("\n");
   const html = `<p>These products are running low:</p><ul>${lines
     .map((line) => `<li>${line}</li>`)
     .join("")}</ul>`;
 
-  for (const member of staff) {
-    if (!member.email) {
-      continue;
-    }
-
+  for (const address of addresses) {
     await sendEmail({
-      to: member.email,
+      to: address,
       subject: `Bangla Bazar — ${products.length} product${products.length === 1 ? "" : "s"} low on stock`,
       html,
       text,
     });
   }
 
-  return { low: products.length, alerted: staff.length };
+  return { low: products.length, alerted: addresses.length };
 };
 
 export const startOrdersWorker = (): Worker => {

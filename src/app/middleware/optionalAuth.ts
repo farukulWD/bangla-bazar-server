@@ -1,11 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { TAuthUser } from "../modules/auth/auth.interface";
-import { isTokenStale } from "../modules/auth/auth.session";
-import { TRole } from "../modules/roles/roles.interface";
+import { authUserFromToken } from "../modules/auth/auth.verify";
 
 import catchAsync from "../utils/catchAsync";
-import { verifyAccessToken } from "../modules/auth/auth.utils";
-import { User } from "../modules/users/user.model";
 
 const optionalAuth = catchAsync(
   async (req: Request, _res: Response, next: NextFunction) => {
@@ -14,23 +11,14 @@ const optionalAuth = catchAsync(
       return next();
     }
     const token = header.slice("Bearer ".length).trim();
-    let payload;
-    try {
-      payload = verifyAccessToken(token);
-    } catch {
-      return next();
-    }
-    const user = await User.findById(payload.userId).populate<{
-      role: TRole | null;
-    }>("role");
 
-    if (!user || user.isDeleted || user.status === "inactive") {
-      return next();
+    try {
+      req.user = await authUserFromToken(token);
+    } catch {
+      // Every rejection an authenticated route would raise — expired, deleted,
+      // deactivated, stale — just means anonymous here.
     }
-    if (isTokenStale(user.passwordChangedAt, payload.iat)) {
-      return next();
-    }
-    req.user = user as unknown as TAuthUser;
+
     next();
   },
 );

@@ -17,6 +17,7 @@ import { TAuthUser } from "../auth/auth.interface";
 import { TCart } from "../cart/cart.interface";
 import { Cart } from "../cart/cart.model";
 import { emptyCart, priceCart } from "../cart/cart.services";
+import { notify } from "../notification/notification.emit";
 import { TOrderCoupon } from "./order.interface";
 import { couponServices } from "../coupon/coupon.services";
 import {
@@ -212,6 +213,15 @@ const placeOrder = async (
       queueLowStock({ productIds: touched }),
     ]),
   );
+
+  notify({
+    event: "order.placed",
+    orderId: placed._id.toString(),
+    userId: placed.user.toString(),
+    invoice: placed.invoice,
+    total: placed.total,
+    actorId: user.toString(),
+  });
 
   return placed;
 };
@@ -464,6 +474,14 @@ const cancelOrder = async (caller: TAuthUser, id: string): Promise<TOrder> => {
 
   fireAndForget(queueOrderStatus({ orderId: id, status: "cancelled" }));
 
+  notify({
+    event: "order.cancelled",
+    orderId: cancelled._id.toString(),
+    userId: cancelled.user.toString(),
+    invoice: cancelled.invoice,
+    actorId: caller._id.toString(),
+  });
+
   return cancelled;
 };
 
@@ -528,10 +546,20 @@ const updateStatus = async (
 
   fireAndForget(queueOrderStatus({ orderId: id, status }));
 
+  notify({
+    event: "order.status",
+    orderId: advanced._id.toString(),
+    userId: advanced.user.toString(),
+    invoice: advanced.invoice,
+    status: advanced.status,
+    actorId: caller._id.toString(),
+  });
+
   return advanced;
 };
 
 const updatePaymentStatus = async (
+  caller: TAuthUser,
   id: string,
   paymentStatus: TPaymentStatus,
 ): Promise<TOrder> => {
@@ -550,6 +578,15 @@ const updatePaymentStatus = async (
   if (!updated) {
     throw orderNotFound();
   }
+
+  notify({
+    event: "order.payment",
+    orderId: updated._id.toString(),
+    userId: updated.user.toString(),
+    invoice: updated.invoice,
+    paymentStatus: updated.paymentStatus,
+    actorId: caller._id.toString(),
+  });
 
   return updated;
 };
