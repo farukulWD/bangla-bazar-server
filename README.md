@@ -86,6 +86,18 @@ mounted at /api/v1/carts and /api/v1/orders.
                 mongosh --eval 'rs.initiate()'
             There is deliberately no non-transactional fallback: it could leave an order whose
             stock never moved, or stock moved for an order that was never written.
+    ⦁	Coupons: POST /api/v1/orders accepts an optional couponCode. Only the code is sent —
+            what it is worth is settled server-side inside the placement transaction via
+            couponServices.applyCoupon, which checks the status, the start/end window and the
+            minimum spend. A rejected code fails the whole placement; no order is created.
+            The terms are snapshotted onto the order (code, title, discountType, discountValue)
+            alongside the money in `discount`, so an invoice still explains itself after the
+            coupon is edited or deleted. Codes are case-insensitive.
+            POST /api/v1/coupons/apply previews a discount at checkout without placing anything.
+    ⦁	A coupon is applied to the items subtotal, and the free-delivery threshold is then
+            judged on the discounted amount — so a coupon cannot be stacked to cross a
+            threshold it just dropped the basket below. Flip that by passing view.subtotal
+            instead of view.subtotal - discount to resolveShipping in order.services.ts.
     ⦁	Delivery fees and the free-delivery threshold are constants in
             src/app/modules/order/order.constant.ts, never read from the request body.
             GET /api/v1/orders/options serves them to the client.

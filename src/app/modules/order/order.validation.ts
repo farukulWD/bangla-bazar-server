@@ -1,5 +1,6 @@
 import z from "zod";
 
+import { COUPON_CODE_MAX } from "../coupon/coupon.constant";
 import {
   ORDER_STATUS,
   PAYMENT_METHODS,
@@ -33,6 +34,13 @@ const placeOrderValidationSchema = z.object({
     paymentMethod: z.enum(PAYMENT_METHODS, {
       error: "Choose a payment method",
     }),
+    // Optional, and only ever a code: what it is worth is settled server-side.
+    couponCode: z
+      .string()
+      .trim()
+      .min(1, "Enter a coupon code")
+      .max(COUPON_CODE_MAX, "That coupon code is too long")
+      .optional(),
   }),
 });
 

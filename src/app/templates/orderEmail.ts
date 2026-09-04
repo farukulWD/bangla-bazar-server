@@ -29,6 +29,7 @@ export type TOrderEmailParams = {
   subtotal: number;
   shippingCost: number;
   discount: number;
+  couponCode?: string;
   total: number;
 };
 
@@ -121,7 +122,7 @@ ${itemRows}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:14px;">
 ${totalsRow("Subtotal", money(params.subtotal))}
 ${totalsRow("Delivery", params.shippingCost === 0 ? "Free" : money(params.shippingCost))}
-${params.discount > 0 ? totalsRow("Discount", `- ${money(params.discount)}`) : ""}
+${params.discount > 0 ? totalsRow(params.couponCode ? `Discount (${escapeHtml(params.couponCode)})` : "Discount", `- ${money(params.discount)}`) : ""}
 ${totalsRow("Total", money(params.total), true)}
 </table>
 
@@ -154,7 +155,11 @@ ${totalsRow("Total", money(params.total), true)}
     "",
     `Subtotal: ${money(params.subtotal)}`,
     `Delivery: ${params.shippingCost === 0 ? "Free" : money(params.shippingCost)}`,
-    ...(params.discount > 0 ? [`Discount: -${money(params.discount)}`] : []),
+    ...(params.discount > 0
+      ? [
+          `Discount${params.couponCode ? ` (${params.couponCode})` : ""}: -${money(params.discount)}`,
+        ]
+      : []),
     `Total: ${money(params.total)}`,
     "",
     `© ${year} ${BRAND}`,

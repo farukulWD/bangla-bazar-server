@@ -5,6 +5,7 @@ export enum PermissionModule {
   Attribute = "attribute",
   Product = "product",
   Order = "order",
+  Coupon = "coupon",
 }
 
 export type TPermissionOf<M extends PermissionModule> =
@@ -71,6 +72,14 @@ export enum OrderPermission {
   CancelOrder = "can_cancel_order",
 }
 
+export enum CouponPermission {
+  ViewCoupons = "can_view_coupons",
+  AddCoupon = "can_add_coupon",
+  EditCoupon = "can_edit_coupon",
+  PublishCoupon = "can_publish_coupon",
+  DeleteCoupon = "can_delete_coupon",
+}
+
 export const PERMISSION_REGISTRY = {
   [PermissionModule.User]: UserPermission,
   [PermissionModule.Role]: RolePermission,
@@ -78,6 +87,7 @@ export const PERMISSION_REGISTRY = {
   [PermissionModule.Attribute]: AttributePermission,
   [PermissionModule.Product]: ProductPermission,
   [PermissionModule.Order]: OrderPermission,
+  [PermissionModule.Coupon]: CouponPermission,
 } as const;
 
 export const PERMISSION_MODULE_LABELS: Record<PermissionModule, string> = {
@@ -87,6 +97,7 @@ export const PERMISSION_MODULE_LABELS: Record<PermissionModule, string> = {
   [PermissionModule.Attribute]: "Attributes",
   [PermissionModule.Product]: "Products",
   [PermissionModule.Order]: "Orders",
+  [PermissionModule.Coupon]: "Coupons",
 };
 
 export const PERMISSION_LABELS: Record<TAnyPermission, string> = {
@@ -120,6 +131,11 @@ export const PERMISSION_LABELS: Record<TAnyPermission, string> = {
   [OrderPermission.UpdateOrderStatus]: "Move an order to its next status",
   [OrderPermission.UpdatePaymentStatus]: "Change an order's payment status",
   [OrderPermission.CancelOrder]: "Cancel anyone's order",
+  [CouponPermission.ViewCoupons]: "View coupons",
+  [CouponPermission.AddCoupon]: "Add coupon",
+  [CouponPermission.EditCoupon]: "Edit coupon",
+  [CouponPermission.PublishCoupon]: "Publish or unpublish coupon",
+  [CouponPermission.DeleteCoupon]: "Delete coupon",
 };
 
 export const PERMISSION_MODULES = Object.values(PermissionModule);

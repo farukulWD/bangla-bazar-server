@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 
 import { TCartLineOption } from "../cart/cart.interface";
+import { TDiscountType } from "../coupon/coupon.interface";
 import {
   ORDER_STATUS,
   PAYMENT_METHODS,
@@ -38,6 +39,19 @@ export type TOrderAddress = {
   zipCode: string;
 };
 
+/**
+ * What the discount was, frozen at placement. The coupon is referenced for
+ * analytics, but its terms are copied for the same reason the items are: a coupon
+ * can be edited or deleted, and an invoice must still explain the money.
+ */
+export type TOrderCoupon = {
+  coupon: Types.ObjectId;
+  code: string;
+  title: string;
+  discountType: TDiscountType;
+  discountValue: number;
+};
+
 export type TOrderStatusEntry = {
   status: TOrderStatus;
   at: Date;
@@ -53,6 +67,7 @@ export type TOrder = {
   subtotal: number;
   shippingCost: number;
   discount: number;
+  coupon: TOrderCoupon | null;
   total: number;
   shippingOption: TShippingKey;
   paymentMethod: TPaymentMethod;
@@ -76,6 +91,7 @@ export type TPlaceOrder = {
   addressId: string;
   shippingOption: TShippingKey;
   paymentMethod: TPaymentMethod;
+  couponCode?: string;
 };
 
 export type TUpdateOrderStatus = {

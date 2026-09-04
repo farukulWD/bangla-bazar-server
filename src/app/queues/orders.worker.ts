@@ -59,6 +59,7 @@ const emailParams = (order: TOrder, name: string): TOrderEmailParams => ({
   subtotal: order.subtotal,
   shippingCost: order.shippingCost,
   discount: order.discount,
+  couponCode: order.coupon?.code,
   total: order.total,
 });
 

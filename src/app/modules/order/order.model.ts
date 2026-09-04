@@ -9,6 +9,7 @@ import {
 import {
   TOrder,
   TOrderAddress,
+  TOrderCoupon,
   TOrderCounter,
   TOrderItem,
   TOrderStatusEntry,
@@ -62,6 +63,17 @@ const orderAddressSchema = new Schema<TOrderAddress>(
   { _id: false },
 );
 
+const orderCouponSchema = new Schema<TOrderCoupon>(
+  {
+    coupon: { type: Schema.Types.ObjectId, ref: "Coupon", required: true },
+    code: { type: String, required: true },
+    title: { type: String, default: "" },
+    discountType: { type: String, lowercase: true, required: true },
+    discountValue: { type: Number, required: true, min: 0 },
+  },
+  { _id: false },
+);
+
 const orderStatusEntrySchema = new Schema<TOrderStatusEntry>(
   {
     status: {
@@ -100,6 +112,9 @@ const orderSchema = new Schema<TOrder>(
     subtotal: { type: Number, required: true, min: 0 },
     shippingCost: { type: Number, required: true, min: 0 },
     discount: { type: Number, default: 0, min: 0 },
+    // Null when no code was used. Set together with `discount`, which holds the
+    // money; this holds the terms that produced it.
+    coupon: { type: orderCouponSchema, default: null },
     total: { type: Number, required: true, min: 0 },
     shippingOption: {
       type: String,

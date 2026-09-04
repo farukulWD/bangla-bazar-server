@@ -17,6 +17,8 @@ import { TAuthUser } from "../auth/auth.interface";
 import { TCart } from "../cart/cart.interface";
 import { Cart } from "../cart/cart.model";
 import { emptyCart, priceCart } from "../cart/cart.services";
+import { TOrderCoupon } from "./order.interface";
+import { couponServices } from "../coupon/coupon.services";
 import {
   FREE_DELIVERY_OVER,
   ORDER_CUSTOMER_CANCELLABLE,
@@ -120,9 +122,31 @@ const placeOrder = async (
         throw badRequest("That delivery address was not found", "addressId");
       }
 
-      const { fee } = resolveShipping(payload.shippingOption, view.subtotal);
+      const applied = payload.couponCode
+        ? await couponServices.applyCoupon(
+            payload.couponCode,
+            view.subtotal,
+            session,
+          )
+        : null;
+
+      const discount = applied?.discount ?? 0;
+
+      const coupon: TOrderCoupon | null = applied
+        ? {
+            coupon: applied.coupon._id,
+            code: applied.coupon.couponCode,
+            title: applied.coupon.title,
+            discountType: applied.coupon.discountType,
+            discountValue: applied.coupon.discountValue,
+          }
+        : null;
+
+      const { fee } = resolveShipping(
+        payload.shippingOption,
+        view.subtotal - discount,
+      );
       const items = toOrderItems(view);
-      const discount = 0;
 
       const [created] = await Order.create(
         [
@@ -143,6 +167,7 @@ const placeOrder = async (
             subtotal: view.subtotal,
             shippingCost: fee,
             discount,
+            coupon,
             total: view.subtotal + fee - discount,
             shippingOption: payload.shippingOption,
             paymentMethod: payload.paymentMethod,
@@ -173,8 +198,6 @@ const placeOrder = async (
     );
   }
 
-  // The order exists and its stock has moved; the confirmation and the stock alert
-  // are notices about that, not part of it.
   fireAndForget(
     Promise.all([
       queueOrderPlaced({ orderId: placed._id.toString() }),
@@ -192,8 +215,6 @@ const buildFilter = (
 ): QueryFilter<TOrder> => {
   const filter: QueryFilter<TOrder> = {};
 
-  // Ownership is a query condition, never a check after the fact: a customer's
-  // request never loads someone else's order at all.
   if (isStaff) {
     const userId = typeof query.userId === "string" ? query.userId : "";
 
