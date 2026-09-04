@@ -1,5 +1,5 @@
 import httpStatus from "http-status";
-import { Types } from "mongoose";
+import { ClientSession, Types } from "mongoose";
 import QueryBuilder from "../../builder/queryBuilder";
 import AppError from "../../errors/AppError";
 import { TPagination } from "../../interface/common";
@@ -340,15 +340,18 @@ const couponRejected = (message: string) =>
 const applyCoupon = async (
   code: string,
   cartTotal: number,
+  session?: ClientSession,
 ): Promise<TApplyCouponResult> => {
   const now = new Date();
   const couponCode = normalizeCouponCode(code);
 
+  // The session is passed when placing an order, so the code is read in the same
+  // transaction that prices and commits it.
   const coupon = await Coupon.findOne({
     couponCode,
     status: "show",
     ...NOT_DELETED,
-  });
+  }).session(session ?? null);
 
   // A hidden coupon is reported as unknown rather than as hidden: the difference
   // would tell a caller which unpublished codes exist.

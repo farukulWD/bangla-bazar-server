@@ -4,6 +4,7 @@ export enum PermissionModule {
   Category = "category",
   Attribute = "attribute",
   Product = "product",
+  Order = "order",
   Coupon = "coupon",
 }
 
@@ -59,6 +60,18 @@ export enum ProductPermission {
   DeleteProduct = "can_delete_product",
 }
 
+/**
+ * Placing and cancelling an order are things a customer does to their own order, so
+ * they are not permissions — ownership is checked in the query instead. What is here
+ * is the staff side: seeing everyone's orders, and moving one along.
+ */
+export enum OrderPermission {
+  ViewOrders = "can_view_orders",
+  UpdateOrderStatus = "can_update_order_status",
+  UpdatePaymentStatus = "can_update_payment_status",
+  CancelOrder = "can_cancel_order",
+}
+
 export enum CouponPermission {
   ViewCoupons = "can_view_coupons",
   AddCoupon = "can_add_coupon",
@@ -73,6 +86,7 @@ export const PERMISSION_REGISTRY = {
   [PermissionModule.Category]: CategoryPermission,
   [PermissionModule.Attribute]: AttributePermission,
   [PermissionModule.Product]: ProductPermission,
+  [PermissionModule.Order]: OrderPermission,
   [PermissionModule.Coupon]: CouponPermission,
 } as const;
 
@@ -82,6 +96,7 @@ export const PERMISSION_MODULE_LABELS: Record<PermissionModule, string> = {
   [PermissionModule.Category]: "Categories",
   [PermissionModule.Attribute]: "Attributes",
   [PermissionModule.Product]: "Products",
+  [PermissionModule.Order]: "Orders",
   [PermissionModule.Coupon]: "Coupons",
 };
 
@@ -112,6 +127,10 @@ export const PERMISSION_LABELS: Record<TAnyPermission, string> = {
   [ProductPermission.EditProduct]: "Edit product and its variants",
   [ProductPermission.PublishProduct]: "Publish or unpublish product",
   [ProductPermission.DeleteProduct]: "Delete product",
+  [OrderPermission.ViewOrders]: "View all orders",
+  [OrderPermission.UpdateOrderStatus]: "Move an order to its next status",
+  [OrderPermission.UpdatePaymentStatus]: "Change an order's payment status",
+  [OrderPermission.CancelOrder]: "Cancel anyone's order",
   [CouponPermission.ViewCoupons]: "View coupons",
   [CouponPermission.AddCoupon]: "Add coupon",
   [CouponPermission.EditCoupon]: "Edit coupon",

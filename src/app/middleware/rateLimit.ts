@@ -1,20 +1,126 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import rateLimit from "express-rate-limit";
+import rateLimit, {
+  ClientRateLimitInfo,
+  IncrementResponse,
+  MemoryStore,
+  Options,
+  Store,
+} from "express-rate-limit";
 import httpStatus from "http-status";
 import { RedisStore } from "rate-limit-redis";
 import redisClient from "../../redis";
 import AppError from "../errors/AppError";
+import { logger } from "../shared/logger";
 
 const tooManyRequests =
   (message: string) => (_req: Request, _res: Response, next: NextFunction) =>
     next(new AppError(httpStatus.TOO_MANY_REQUESTS, message));
 
-const redisStore = (prefix: string) =>
-  new RedisStore({
-    prefix,
-    sendCommand: (...args: string[]) =>
-      redisClient.call(...(args as [string, ...string[]])) as Promise<string>,
-  });
+/** A limiter must never be the slowest thing in a request. */
+const STORE_TIMEOUT_MS = 1000;
+
+/** How long to stay on memory before trying Redis again, so a dead server is not
+ *  re-dialled on every single request. */
+const STORE_RETRY_AFTER_MS = 30_000;
+
+const withTimeout = async <T>(work: Promise<T> | T): Promise<T> => {
+  // ioredis queues commands while it is disconnected instead of rejecting them, so
+  // a call against a dead server never settles on its own.
+  const pending = Promise.resolve(work);
+  pending.catch(() => undefined);
+
+  return Promise.race([
+    pending,
+    new Promise<never>((_resolve, reject) => {
+      const timer = setTimeout(
+        () => reject(new Error(`store timed out after ${STORE_TIMEOUT_MS}ms`)),
+        STORE_TIMEOUT_MS,
+      );
+      timer.unref();
+    }),
+  ]);
+};
+
+class ResilientStore implements Store {
+  private readonly redis: RedisStore;
+  private readonly memory = new MemoryStore();
+  private degradedUntil = 0;
+
+  constructor(prefix: string) {
+    this.redis = new RedisStore({
+      prefix,
+      sendCommand: (...args: string[]) =>
+        redisClient.call(...(args as [string, ...string[]])) as Promise<string>,
+    });
+  }
+
+  init(options: Options): void {
+    this.redis.init?.(options);
+    this.memory.init?.(options);
+  }
+
+  private degrade(operation: string, error: unknown): void {
+    if (this.degradedUntil <= Date.now()) {
+      logger.error(
+        `Rate limiter falling back to in-memory counts for ${STORE_RETRY_AFTER_MS / 1000}s ` +
+          `(${operation} failed: ${error}). Limits now apply per process, not cluster-wide.`,
+      );
+    }
+
+    this.degradedUntil = Date.now() + STORE_RETRY_AFTER_MS;
+  }
+
+  private async run<T>(
+    operation: string,
+    viaRedis: () => Promise<T> | T,
+    viaMemory: () => Promise<T> | T,
+  ): Promise<T> {
+    if (Date.now() < this.degradedUntil) {
+      return viaMemory();
+    }
+
+    try {
+      return await withTimeout(viaRedis());
+    } catch (error) {
+      this.degrade(operation, error);
+      return viaMemory();
+    }
+  }
+
+  increment(key: string): Promise<IncrementResponse> {
+    return this.run(
+      "increment",
+      () => this.redis.increment(key),
+      () => this.memory.increment(key),
+    );
+  }
+
+  decrement(key: string): Promise<void> {
+    return this.run(
+      "decrement",
+      () => this.redis.decrement(key),
+      () => this.memory.decrement(key),
+    );
+  }
+
+  resetKey(key: string): Promise<void> {
+    return this.run(
+      "resetKey",
+      () => this.redis.resetKey(key),
+      () => this.memory.resetKey(key),
+    );
+  }
+
+  get(key: string): Promise<ClientRateLimitInfo | undefined> {
+    return this.run(
+      "get",
+      () => this.redis.get?.(key),
+      () => this.memory.get?.(key),
+    );
+  }
+}
+
+const redisStore = (prefix: string) => new ResilientStore(prefix);
 
 export const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -29,14 +135,10 @@ type TPublicRateLimitOptions = {
   limit: number;
   message: string;
   prefix: string;
-  /** What to count by. Returning undefined falls back to the caller's IP. */
+
   key?: (req: Request) => string | undefined;
 };
 
-/**
- * For unauthenticated routes that cost money — sending codes above all. `userRateLimit`
- * cannot serve them: it keys on `req.user`, which is exactly what these routes lack.
- */
 export const publicRateLimit = ({
   windowMs,
   limit,
@@ -50,15 +152,12 @@ export const publicRateLimit = ({
     standardHeaders: "draft-8",
     legacyHeaders: false,
     store: redisStore(prefix),
-    // Falls back to what v7 keys on by default. (v8 adds `ipKeyGenerator` for IPv6
-    // subnet grouping, but v8 also drops `max`, which the legacy server still passes.)
     keyGenerator: (req) => key?.(req) || req.ip || "unknown",
     handler: tooManyRequests(message),
   });
 
 type TUserRateLimitOptions = Omit<TPublicRateLimitOptions, "key">;
 
-/** Keyed on the account, so cycling candidate values cannot shake the limit off. */
 export const userRateLimit = ({
   windowMs,
   limit,
