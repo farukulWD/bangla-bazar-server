@@ -1,0 +1,673 @@
+[
+  {
+    "_id": "62c827b5a427b63741da9175",
+    "name": "Home",
+    "description": "This is Home Category",
+    "slug": "home",
+    "parentId": null,
+    "parentName": "Home",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "62cc0791d511b304aecdfbf2",
+    "name": "Baby Food",
+    "description": "This is baby food category",
+    "slug": "baby-food",
+    "parentId": null,
+    "parentName": "Baby Care",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "62cc07b8d511b304aecdfbfa",
+    "name": "Baby Accessories",
+    "description": "This is baby accessories",
+    "slug": "baby-accessories",
+    "parentId": null,
+    "parentName": "Baby Care",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "62cfab28484d89068aa7a7f5",
+    "name": "Chocolate",
+    "description": "This is Chocolate category",
+    "slug": "chocolate",
+    "parentId": null,
+    "parentName": "Snacks & Instant",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "62cfab39484d89068aa7a7fb",
+    "name": "Chips & Nuts",
+    "description": "This is Chips & Nuts category",
+    "slug": "chips-nuts",
+    "parentId": null,
+    "parentName": "Snacks & Instant",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "62cfab4b484d89068aa7a7ff",
+    "name": "Canned Food",
+    "description": "This is Canned Food category",
+    "slug": "canned-food",
+    "parentId": null,
+    "parentName": "Snacks & Instant",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "62cfad3d484d89068aa7a819",
+    "name": "Sauces",
+    "description": "This is Sauces category",
+    "slug": "sauces",
+    "parentId": null,
+    "parentName": "Sauces & Pickles",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "62cfad52484d89068aa7a81f",
+    "name": "Pickles & Condiments",
+    "description": "This is Pickles & Condiments category",
+    "slug": "pickles-condiments",
+    "parentId": null,
+    "parentName": "Sauces & Pickles",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "62d02efd2d28e904b20e22bf",
+    "name": "Tuna",
+    "description": "This is tuna fish category",
+    "slug": "tuna",
+    "parentId": null,
+    "parentName": "Fish",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "62d03a312d28e904b20e233c",
+    "name": "Tuna",
+    "description": "This is tuna category",
+    "slug": "tuna-2",
+    "parentId": null,
+    "parentName": "Fish",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "62d03a542d28e904b20e2342",
+    "name": "Rui",
+    "description": "This is Rui category",
+    "slug": "rui",
+    "parentId": null,
+    "parentName": "Fish",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "62d2bbd22e63b40520194f1b",
+    "name": "Apple",
+    "description": "This is the apple category",
+    "slug": "apple",
+    "parentId": null,
+    "parentName": "Fresh Fruits",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "62d2bbe62e63b40520194f21",
+    "name": "Orange",
+    "description": "This is orange category",
+    "slug": "orange",
+    "parentId": null,
+    "parentName": "Fresh Fruits",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "62e4ebb90ea79023fc11d847",
+    "name": "Beef",
+    "description": "This is Beef Category",
+    "slug": "beef",
+    "parentId": null,
+    "parentName": "Meat",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aae414d87ff2494210945",
+    "name": "Breakfast",
+    "description": "Breakfast",
+    "slug": "breakfast",
+    "parentId": "62c827b5a427b63741da9175",
+    "parentName": "Home",
+    "icon": "https://res.cloudinary.com/ahossain/image/upload/v1658340705/category%20icon/bagel_mt3fod.png",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aae624d87ff2494210951",
+    "name": "Cereal",
+    "description": "Cereal",
+    "slug": "cereal",
+    "parentId": "632aae414d87ff2494210945",
+    "parentName": "Breakfasts",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aae7b4d87ff2494210967",
+    "name": "Bread",
+    "description": "Bread",
+    "slug": "bread",
+    "parentId": "632aae414d87ff2494210945",
+    "parentName": "Breakfasts",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab0334d87ff24942109c1",
+    "name": "Drinks",
+    "description": "Drinks",
+    "slug": "drinks",
+    "parentId": "62c827b5a427b63741da9175",
+    "parentName": "Home",
+    "icon": "https://res.cloudinary.com/ahossain/image/upload/v1658340705/category%20icon/juice_p5gv5k.png",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab0454d87ff24942109cc",
+    "name": "Energy Drinks",
+    "description": "Energy Drinks",
+    "slug": "energy-drinks",
+    "parentId": "632ab0334d87ff24942109c1",
+    "parentName": "Drink",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab0504d87ff24942109d7",
+    "name": "Coffee",
+    "description": "Coffee",
+    "slug": "coffee",
+    "parentId": "632ab0334d87ff24942109c1",
+    "parentName": "Drink",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab0564d87ff24942109df",
+    "name": "Juice",
+    "description": "Juice",
+    "slug": "juice",
+    "parentId": "632ab0334d87ff24942109c1",
+    "parentName": "Drink",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab0604d87ff24942109e7",
+    "name": "Water",
+    "description": "Water",
+    "slug": "water",
+    "parentId": "632ab0334d87ff24942109c1",
+    "parentName": "Drink",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab0664d87ff24942109ef",
+    "name": "Tea",
+    "description": "Tea",
+    "slug": "tea",
+    "parentId": "632ab0334d87ff24942109c1",
+    "parentName": "Drink",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab14a4d87ff2494210a29",
+    "name": "Milk & Dairy",
+    "description": "Milk & Dairy",
+    "slug": "milk-dairy",
+    "parentId": "62c827b5a427b63741da9175",
+    "parentName": "Home",
+    "icon": "https://res.cloudinary.com/ahossain/image/upload/v1658340706/category%20icon/milk_dcl0dr.png",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab1584d87ff2494210a31",
+    "name": "Dairy",
+    "description": "Dairy",
+    "slug": "dairy",
+    "parentId": "632ab14a4d87ff2494210a29",
+    "parentName": "Milk & Dairys",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab1644d87ff2494210a3c",
+    "name": "Ice Cream",
+    "description": "Ice Cream",
+    "slug": "ice-cream",
+    "parentId": "632ab14a4d87ff2494210a29",
+    "parentName": "Milk & Dairys",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab16c4d87ff2494210a44",
+    "name": "Butter & Ghee",
+    "description": "Butter & Ghee",
+    "slug": "butter-ghee",
+    "parentId": "632ab14a4d87ff2494210a29",
+    "parentName": "Milk & Dairys",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab1e04d87ff2494210a6a",
+    "name": "Jam & Jelly",
+    "description": "Jam & Jelly",
+    "slug": "jam-jelly",
+    "parentId": "62c827b5a427b63741da9175",
+    "parentName": "Home",
+    "icon": "https://i.postimg.cc/rmLvfsMC/strawberry-jam-1.png",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab2864d87ff2494210a8a",
+    "name": "Beauty & Healths",
+    "description": "Beauty & Healths",
+    "slug": "beauty-healths",
+    "parentId": "62c827b5a427b63741da9175",
+    "parentName": "Home",
+    "icon": "https://res.cloudinary.com/ahossain/image/upload/v1658340706/category%20icon/beauty_vfbmzc.png",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab2b64d87ff2494210aa7",
+    "name": "Men",
+    "description": "Men",
+    "slug": "men",
+    "parentId": "632ab2864d87ff2494210a8a",
+    "parentName": "Beauty & Healths",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab2c34d87ff2494210ab2",
+    "name": "Women",
+    "description": "Women",
+    "slug": "women",
+    "parentId": "632ab2864d87ff2494210a8a",
+    "parentName": "Beauty & Healths",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab2d54d87ff2494210ac0",
+    "name": "Shaving Needs",
+    "description": "Shaving Needs",
+    "slug": "shaving-needs",
+    "parentId": "632ab2b64d87ff2494210aa7",
+    "parentName": "Men",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab2df4d87ff2494210ac8",
+    "name": "Body Care",
+    "description": "Body Care",
+    "slug": "body-care",
+    "parentId": "632ab2b64d87ff2494210aa7",
+    "parentName": "Men",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab2f04d87ff2494210ad0",
+    "name": "Skin Care",
+    "description": "Skin Care",
+    "slug": "skin-care",
+    "parentId": "632ab2c34d87ff2494210ab2",
+    "parentName": "Women",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab2f84d87ff2494210ad8",
+    "name": "Oral Care",
+    "description": "Oral Care",
+    "slug": "oral-care",
+    "parentId": "632ab2c34d87ff2494210ab2",
+    "parentName": "Women",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab2fd4d87ff2494210ae0",
+    "name": "Cosmetics",
+    "description": "Cosmetics",
+    "slug": "cosmetics",
+    "parentId": "632ab2c34d87ff2494210ab2",
+    "parentName": "Women",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab3044d87ff2494210ae8",
+    "name": "Bath",
+    "description": "Bath",
+    "slug": "bath",
+    "parentId": "632ab2c34d87ff2494210ab2",
+    "parentName": "Women",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab4434d87ff2494210b0e",
+    "name": "Pet Care",
+    "description": "Pet Care",
+    "slug": "pet-care",
+    "parentId": "62c827b5a427b63741da9175",
+    "parentName": "Home",
+    "icon": "https://res.cloudinary.com/ahossain/image/upload/v1658340707/category%20icon/cat_tznwmq.png",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab4524d87ff2494210b19",
+    "name": "Cat Care",
+    "description": "Cat Care",
+    "slug": "cat-care",
+    "parentId": "632ab4434d87ff2494210b0e",
+    "parentName": "Pet Cares",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ab45b4d87ff2494210b21",
+    "name": "Dog Care",
+    "description": "Dog Care",
+    "slug": "dog-care",
+    "parentId": "632ab4434d87ff2494210b0e",
+    "parentName": "Pet Cares",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ac9864d87ff2494210b49",
+    "name": "Household Tools",
+    "description": "Household Tools",
+    "slug": "household-tools",
+    "parentId": "62c827b5a427b63741da9175",
+    "parentName": "Home",
+    "icon": "https://res.cloudinary.com/ahossain/image/upload/v1658340706/category%20icon/spray_pebsjt.png",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ac9934d87ff2494210b54",
+    "name": "Cleaner",
+    "description": "Cleaner",
+    "slug": "cleaner",
+    "parentId": "632ac9864d87ff2494210b49",
+    "parentName": "Household Tool",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ac9984d87ff2494210b5c",
+    "name": "Luandry",
+    "description": "Luandry",
+    "slug": "luandry",
+    "parentId": "632ac9864d87ff2494210b49",
+    "parentName": "Household Tool",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ac99d4d87ff2494210b64",
+    "name": "Air Freshener",
+    "description": "Air Freshener",
+    "slug": "air-freshener",
+    "parentId": "632ac9864d87ff2494210b49",
+    "parentName": "Household Tool",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ac9b24d87ff2494210b74",
+    "name": "Pest Control",
+    "description": "Pest Control",
+    "slug": "pest-control",
+    "parentId": "632ac9864d87ff2494210b49",
+    "parentName": "Household Tool",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ac9ba4d87ff2494210b7c",
+    "name": "Cleaning Tools",
+    "description": "Cleaning Tools",
+    "slug": "cleaning-tools",
+    "parentId": "632ac9864d87ff2494210b49",
+    "parentName": "Household Tool",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ac9c24d87ff2494210b84",
+    "name": "Water Filter",
+    "description": "Water Filter",
+    "slug": "water-filter",
+    "parentId": "632ac9864d87ff2494210b49",
+    "parentName": "Household Tool",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ac9e94d87ff2494210ba0",
+    "name": "Biscuits & Cakes",
+    "description": "Biscuits & Cakes",
+    "slug": "biscuits-cakes",
+    "parentId": "62c827b5a427b63741da9175",
+    "parentName": "Home",
+    "icon": "https://res.cloudinary.com/ahossain/image/upload/v1658340705/category%20icon/cookie_1_ugipqa.png",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ac9ef4d87ff2494210ba8",
+    "name": "Cakes",
+    "description": "Cakes",
+    "slug": "cakes",
+    "parentId": "632ac9e94d87ff2494210ba0",
+    "parentName": "Biscuits & Cake",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632ac9f64d87ff2494210bb0",
+    "name": "Biscuits",
+    "description": "Biscuits",
+    "slug": "biscuits",
+    "parentId": "632ac9e94d87ff2494210ba0",
+    "parentName": "Biscuits & Cake",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aca0b4d87ff2494210bc4",
+    "name": "Cooking Essentials",
+    "description": "Cooking Essentials",
+    "slug": "cooking-essentials",
+    "parentId": "62c827b5a427b63741da9175",
+    "parentName": "Home",
+    "icon": "https://res.cloudinary.com/ahossain/image/upload/v1658340704/category%20icon/frying-pan_vglm5c.png",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aca144d87ff2494210bcc",
+    "name": "Oil",
+    "description": "Oil",
+    "slug": "oil",
+    "parentId": "632aca0b4d87ff2494210bc4",
+    "parentName": "Cooking Essential",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aca184d87ff2494210bd4",
+    "name": "Flour",
+    "description": "Flour",
+    "slug": "flour",
+    "parentId": "632aca0b4d87ff2494210bc4",
+    "parentName": "Cooking Essential",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aca2b4d87ff2494210be8",
+    "name": "Fruits & Vegetable",
+    "description": "Fruits & Vegetable",
+    "slug": "fruits-vegetable",
+    "parentId": "62c827b5a427b63741da9175",
+    "parentName": "Home",
+    "icon": "https://res.cloudinary.com/ahossain/image/upload/v1658340704/category%20icon/cabbage_n59uv3.png",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aca374d87ff2494210bf0",
+    "name": "Fresh Vegetable",
+    "description": "Fresh Vegetable",
+    "slug": "fresh-vegetable",
+    "parentId": "632aca2b4d87ff2494210be8",
+    "parentName": "Fruits & Vegetables",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aca3d4d87ff2494210bf8",
+    "name": "Dry Fruits",
+    "description": "Dry Fruits",
+    "slug": "dry-fruits",
+    "parentId": "632aca2b4d87ff2494210be8",
+    "parentName": "Fruits & Vegetables",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aca454d87ff2494210c00",
+    "name": "Fresh Fruits",
+    "description": "Fresh Fruits",
+    "slug": "fresh-fruits",
+    "parentId": "632aca2b4d87ff2494210be8",
+    "parentName": "Fruits & Vegetables",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aca524d87ff2494210c08",
+    "name": "Apple",
+    "description": "Apple",
+    "slug": "apple-2",
+    "parentId": "632aca454d87ff2494210c00",
+    "parentName": "Fresh Fruits",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aca594d87ff2494210c10",
+    "name": "Orange",
+    "description": "Orange",
+    "slug": "orange-2",
+    "parentId": "632aca454d87ff2494210c00",
+    "parentName": "Fresh Fruits",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aca6d4d87ff2494210c24",
+    "name": "Fish & Meat",
+    "description": "Fish & Meat",
+    "slug": "fish-meat",
+    "parentId": "62c827b5a427b63741da9175",
+    "parentName": "Home",
+    "icon": "https://res.cloudinary.com/ahossain/image/upload/v1658340705/category%20icon/carp-fish_paxzrt.png",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aca754d87ff2494210c2c",
+    "name": "Meat",
+    "description": "Meat",
+    "slug": "meat",
+    "parentId": "632aca6d4d87ff2494210c24",
+    "parentName": "Fish & Meats",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aca7e4d87ff2494210c34",
+    "name": "Fish",
+    "description": "Fish",
+    "slug": "fish",
+    "parentId": "632aca6d4d87ff2494210c24",
+    "parentName": "Fish & Meats",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aca864d87ff2494210c3c",
+    "name": "Beef",
+    "description": "Beef",
+    "slug": "beef-2",
+    "parentId": "632aca754d87ff2494210c2c",
+    "parentName": "Meat",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aca944d87ff2494210c47",
+    "name": "Tuna",
+    "description": "Tuna",
+    "slug": "tuna-3",
+    "parentId": "632aca7e4d87ff2494210c34",
+    "parentName": "Fish",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "632aca9b4d87ff2494210c4f",
+    "name": "Rui",
+    "description": "Rui",
+    "slug": "rui-2",
+    "parentId": "632aca7e4d87ff2494210c34",
+    "parentName": "Fish",
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "63f12afdcc480f0454f475dd",
+    "name": "Baby Food",
+    "description": "Baby Food",
+    "slug": "baby-food-2",
+    "parentId": "632aca2b4d87ff2494210be8",
+    "parentName": "Fruits & Vegetable",
+    "status": "show",
+    "isDeleted": false
+  }
+]
