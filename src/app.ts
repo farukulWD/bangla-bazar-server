@@ -12,7 +12,7 @@ const app: Application = express();
 
 app.use(helmet());
 
-app.use(cors({ origin: config.client_url, credentials: true }));
+app.use(cors({ origin: config.client_urls, credentials: true }));
 app.use(express.json({ limit: "4mb" }));
 app.use(cookieParser());
 app.use(globalLimiter);
