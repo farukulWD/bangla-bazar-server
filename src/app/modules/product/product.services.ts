@@ -7,6 +7,7 @@ import { queueImageUpload } from "../../queues/products.queue";
 import { getSettings } from "../settings/settings.cache";
 import { Attribute } from "../attribute/attribute.model";
 import { Category } from "../category/category.model";
+import { collectCategoryAndDescendantIds } from "../category/category.utils";
 import {
   PRODUCT_DISCOUNTED_LIMIT,
   PRODUCT_POPULAR_LIMIT,
@@ -245,11 +246,23 @@ const createProduct = async (
   return toProductResponse(product);
 };
 
-const buildListFilter = (query: Record<string, unknown>) => {
+const buildListFilter = async (
+  query: Record<string, unknown>,
+): Promise<Record<string, unknown>> => {
   const filter: Record<string, unknown> = { ...NOT_DELETED };
 
   if (query.category && Types.ObjectId.isValid(String(query.category))) {
-    filter.categories = new Types.ObjectId(String(query.category));
+    /**
+     * A product only carries the category ids an admin picked, never their
+     * ancestors, so matching the id alone leaves every parent category empty.
+     * Match the whole branch instead. A leaf stays an equality match, which is
+     * what the `{ categories: 1 }` index serves best.
+     */
+    const branch = await collectCategoryAndDescendantIds([
+      new Types.ObjectId(String(query.category)),
+    ]);
+
+    filter.categories = branch.length > 1 ? { $in: branch } : branch[0];
   }
 
   const min = Number(query.minPrice);
@@ -276,7 +289,7 @@ const getProducts = async (
   query: Record<string, unknown>,
 ): Promise<{ data: TProductResponse[]; pagination: TPagination }> => {
   const productQuery = new QueryBuilder(
-    Product.find(buildListFilter(query)),
+    Product.find(await buildListFilter(query)),
     query,
   )
     .search(PRODUCT_SEARCHABLE_FIELDS)
