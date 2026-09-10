@@ -1,0 +1,7 @@
+dist
+node_modules
+uploads
+logs
+.playwright-mcp
+pnpm-lock.yaml
+src/scripts/data
