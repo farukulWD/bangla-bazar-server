@@ -9,18 +9,12 @@ uploads
 .env.*
 !.env.example
 
-# Legacy JS server — the image runs dist/src/server.js only.
-api
-config
-controller
-lib
-models
-routes
-utils
-script
+# Not part of the image: nginx config lives on the host, and these are
+# local-only artifacts.
+deploy
+.playwright-mcp
 
 README.md
 logo.png
-vercel.json
 .DS_Store
 **/.DS_Store

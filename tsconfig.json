@@ -5,10 +5,8 @@
       "es2022"
     ],
     "module": "commonjs",
-    "rootDir": ".",
+    "rootDir": "src",
     "outDir": "./dist",
-    "allowJs": true,
-    "checkJs": false,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
@@ -23,7 +21,6 @@
   ],
   "exclude": [
     "node_modules",
-    "dist",
-    "api/build"
+    "dist"
   ]
 }

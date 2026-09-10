@@ -2,19 +2,17 @@
   "name": "bangla-bazar-backend",
   "version": "0.1.0",
   "description": "this is the server of Bangla Bazar built with node, express, mongoose schema validation and use mongodb as a database",
-  "main": "index.js",
+  "main": "dist/server.js",
   "scripts": {
-    "dev": "nodemon api/index.js",
-    "dev:ts": "tsx watch src/server.ts",
-    "start": "node api/index.js",
-    "start:ts": "node dist/src/server.js",
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "production": "NODE_ENV=production nodemon api/index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "data:import": "node script/seed.js",
-    "product": "node script/product.js",
-    "generate-password": "node script/script.js",
     "seed:superadmin": "tsx src/scripts/seedSuperAdmin.ts",
     "seed:roles": "tsx src/scripts/seedRoles.ts",
     "seed:settings": "tsx src/scripts/seedSettings.ts",
@@ -58,6 +56,7 @@
     "zod": "^4.5.2"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/bcrypt": "^6.0.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.10",
@@ -68,8 +67,12 @@
     "@types/node": "^26.4.0",
     "@types/nodemailer": "^6.4.24",
     "@types/pdfkit": "^0.17.6",
-    "nodemon": "^3.1.0",
+    "eslint": "^10.10.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.12.0",
+    "prettier": "^3.9.6",
     "tsx": "^4.23.12",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "typescript-eslint": "^8.70.0"
   }
 }
