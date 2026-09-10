@@ -9,15 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    # Exact name of the GitHub environment. Every value lives there as a
-    # secret; there are no repository or environment variables.
+
     environment: Production
     steps:
       - uses: actions/checkout@v4
 
-      # Missing secrets otherwise fail silently: an unset secret expands to the
-      # empty string, the .env key is written empty, and config/index.ts falls
-      # back to its development default instead of erroring.
       - name: Check required secrets
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -77,10 +73,7 @@ jobs:
         with:
           context: .
           push: true
-          # The sha tag is what actually gets deployed, so a rollback is a
-          # one-line IMAGE change on the server; :prod is the moving pointer.
-          # DOCKERHUB_USERNAME is a secret, so these tags appear masked in the
-          # job log.
+
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/bangla-bazar-server:prod
             ${{ secrets.DOCKERHUB_USERNAME }}/bangla-bazar-server:${{ github.sha }}
@@ -114,11 +107,6 @@ jobs:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
-          # Names below match src/app/config/index.ts exactly — they are the
-          # process.env keys the server reads, not aliases. Renaming one here
-          # silently falls back to the code default instead of failing.
-          # Hardcoded rather than read from a secret: it is a constant, and an
-          # empty value would put the production server in development mode.
           NODE_ENV: production
           PORT: ${{ secrets.PORT }}
           MONGO_URI: ${{ secrets.MONGO_URI }}
