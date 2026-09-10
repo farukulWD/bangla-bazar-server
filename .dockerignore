@@ -1,0 +1,26 @@
+.git
+.github
+node_modules
+dist
+logs
+uploads
+
+.env
+.env.*
+!.env.example
+
+# Legacy JS server — the image runs dist/src/server.js only.
+api
+config
+controller
+lib
+models
+routes
+utils
+script
+
+README.md
+logo.png
+vercel.json
+.DS_Store
+**/.DS_Store

@@ -19,6 +19,7 @@
     "seed:roles": "tsx src/scripts/seedRoles.ts",
     "seed:settings": "tsx src/scripts/seedSettings.ts",
     "seed:currencies": "tsx src/scripts/seedCurrencies.ts",
+    "seed:demo": "tsx src/scripts/seedDemo.ts",
     "sync:permissions": "tsx src/scripts/seedRoles.ts --sync",
     "migrate:products": "tsx src/scripts/migrateProducts.ts",
     "migrate:order-currency": "tsx src/scripts/migrateOrderCurrency.ts"

@@ -35,6 +35,16 @@ export default {
   refresh_cookie_max_age_ms:
     Number(process.env.REFRESH_COOKIE_MAX_AGE_MS) || 30 * 24 * 60 * 60 * 1000,
   client_url: process.env.CLIENT_URL || "http://localhost:3000",
+  // Browser origins allowed to call the API. Defaults to `client_url`; set
+  // CLIENT_URLS to a comma-separated list while several clients share it.
+  client_urls: (
+    process.env.CLIENT_URLS ||
+    process.env.CLIENT_URL ||
+    "http://localhost:3000"
+  )
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
   server_public_url: process.env.SERVER_PUBLIC_URL || "",
   ssl_store_id: process.env.STORE_ID || "",
   ssl_store_password: process.env.STORE_PASSWORD || "",

@@ -52,7 +52,7 @@ export const initializeSocketIO = (server: HttpServer): void => {
   try {
     io = new Server(server, {
       pingTimeout: 60000,
-      cors: { origin: config.client_url, credentials: true },
+      cors: { origin: config.client_urls, credentials: true },
     });
 
     io.use((socket, next) => {
