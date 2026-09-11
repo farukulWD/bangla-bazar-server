@@ -101,35 +101,35 @@ export const STOREFRONT_DEFAULTS = {
     founder_six_img:
       "https://res.cloudinary.com/ahossain/image/upload/v1697439689/settings/team-6_gmlts4.webp",
     title: "About Us",
-    top_title: "Welcome to our Bangla Bazar shop",
+    top_title: "Your neighbourhood bazar, delivered",
     top_description:
-      "Holisticly seize parallel metrics and functional ROI.Seamlessly revolutionize error-free internal or organic sources before effective scenarios. Progressively incentivize state of the art applications for efficient intellectual capital. Credibly leverage existing distinctive mindshare through cutting-edge schemas. Proactively procrastinate team building paradigms coordinate client-centric total transparent internal.\n\nDynamically embrace diverse customer service and installed base paradigms. Credibly seize enterprise-wide experiences for end-to-end data. Professionally brand flexible alignments and cost effective architectures. Enthusiastically incentivize seamless communities with seamlessly facilitate revolutionary metrics with strategic theme areas.",
+      "Bangla Bazar started as one stall and a delivery cycle. We still buy the way we did then — early, in person, from growers and wholesalers we know by name — and bring the morning market to your door the same day you order it.",
     card_one_title: "10K",
-    card_one_sub: "Listed Products",
+    card_one_sub: "Products on the shelf",
     card_one_description:
-      "Dynamically morph team driven partnerships after vertical",
+      "Daily vegetables, fish and meat, rice and lentils, spices, and the household staples that round out a weekly bazar.",
     card_two_title: "8K",
-    card_two_sub: "Lovely Customer",
+    card_two_sub: "Households served",
     card_two_description:
-      "Competently productize virtual models without performance.",
+      "Families across the city who hand us their bazar list every week and get their afternoon back.",
     middle_description_one:
-      "Holisticly seize parallel metrics and functional ROI. Seamlessly revolutionize error-free internal or organic sources before effective scenarios. Progressively incentivize state of the art applications for efficient intellectual capital. Credibly leverage existing distinctive mindshare through cutting-edge schemas. Proactively procrastinate team building paradigms coordinate client-centric total transparent internal. Energistically reconceptualize global leadership for high-quality networks. Credibly restore an expanded array of systems rather than accurate results. Collaboratively synergize backend bandwidth without 24/7 functionalities. Credibly utilize proactive ideas whereas cross-media core competencies. Uniquely maximize professional best practices through resource maximizing services. Conveniently architect cross-unit web services for e-business imperatives.",
+      "Nothing sits in storage waiting for an order. Buying happens before sunrise, packing starts as the crates land, and anything that would not go into our own kitchen does not go onto the truck.",
     middle_description_two:
-      "Appropriately visualize market-driven data before one-to-one scenarios. Collaboratively productize multifunctional ROI through intuitive supply chains. Enthusiastically seize revolutionary value and process-centric services. Competently harness intuitive information after interoperable markets. Interactively revolutionize future-proof value before granular sources. Dynamically embrace diverse customer service and installed base paradigms. Credibly seize enterprise-wide experiences for end-to-end data. Professionally brand flexible alignments and cost effective architectures. Enthusiastically incentivize seamless communities with seamlessly facilitate revolutionary metrics with strategic theme areas.",
-    founder_title: "Our Team",
+      "Prices stay close to the bazar rate because the shortest route from farm to kitchen is also the cheapest one. Order before noon and it reaches you the same day. If something is not right when you open the bag, we take it back and refund it.",
+    founder_title: "The people behind the bazar",
     founder_description:
-      "We’re impartial and independent, and every day we create distinctive, world-class reintermediate backend supply programmes.",
+      "Buyers, packers and riders who are at the wholesale market before most of the city is awake.",
     founder_one_name: "Niamh Shea",
     founder_one_sub: "Co-founder & Executive",
     founder_two_name: "Orla Dwyer",
-    founder_two_sub: "Orla Dwyer",
+    founder_two_sub: "Head of Sourcing",
     founder_three_name: "Danien James",
     founder_three_sub: "Co-founder, Chairman",
     founder_four_name: "Dara Frazier",
     founder_four_sub: "Chief Strategy Officer",
     founder_five_name: "Glenda Arvidson",
     founder_five_sub: "HR Officer",
-    founder_six_name: "Melvin Davis ",
+    founder_six_name: "Melvin Davis",
     founder_six_sub: "Lead Developer",
   },
   contact_us: {
