@@ -1,2 +1,6 @@
+allowBuilds:
+  bcrypt: true
+  esbuild: true
+  msgpackr-extract: true
 onlyBuiltDependencies:
   - core-js

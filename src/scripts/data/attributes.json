@@ -1,0 +1,112 @@
+[
+  {
+    "_id": "63f078f54b86ed26b05281b2",
+    "name": "Color",
+    "slug": "color",
+    "option": "dropdown",
+    "type": "attribute",
+    "values": [
+      {
+        "_id": "63f078f54b86ed26b05281b3",
+        "name": "Red",
+        "status": "show",
+        "isDeleted": false
+      },
+      {
+        "_id": "63f078f54b86ed26b05281b4",
+        "name": "Green",
+        "status": "show",
+        "isDeleted": false
+      },
+      {
+        "_id": "63f078f54b86ed26b05281b5",
+        "name": "Blue",
+        "status": "show",
+        "isDeleted": false
+      }
+    ],
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "63f078f54b86ed26b05281b6",
+    "name": "Size",
+    "slug": "size",
+    "option": "radio",
+    "type": "attribute",
+    "values": [
+      {
+        "_id": "63f078f54b86ed26b05281b7",
+        "name": "Small",
+        "status": "show",
+        "isDeleted": false
+      },
+      {
+        "_id": "63f078f54b86ed26b05281b8",
+        "name": "Medium",
+        "status": "show",
+        "isDeleted": false
+      },
+      {
+        "_id": "63f078f54b86ed26b05281b9",
+        "name": "Large",
+        "status": "show",
+        "isDeleted": false
+      }
+    ],
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "63f34946d3639309840ca336",
+    "name": "Gift Wrap",
+    "slug": "gift-wrap",
+    "option": "checkbox",
+    "type": "extra",
+    "values": [
+      {
+        "_id": "63f34946d3639309840ca337",
+        "name": "Yes",
+        "status": "show",
+        "isDeleted": false
+      },
+      {
+        "_id": "63f34946d3639309840ca338",
+        "name": "No",
+        "status": "show",
+        "isDeleted": false
+      }
+    ],
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "63f34983d3639309840ca64a",
+    "name": "Package",
+    "slug": "package",
+    "option": "checkbox",
+    "type": "extra",
+    "values": [
+      {
+        "_id": "63f34983d3639309840ca64b",
+        "name": "Plastic",
+        "status": "show",
+        "isDeleted": false
+      },
+      {
+        "_id": "63f34983d3639309840ca64c",
+        "name": "Jar",
+        "status": "show",
+        "isDeleted": false
+      },
+      {
+        "_id": "63f34983d3639309840ca64d",
+        "name": "Eco Friendly",
+        "status": "show",
+        "isDeleted": false
+      }
+    ],
+    "status": "show",
+    "isDeleted": false
+  }
+]

@@ -1,0 +1,20 @@
+.git
+.github
+node_modules
+dist
+logs
+uploads
+
+.env
+.env.*
+!.env.example
+
+# Not part of the image: nginx config lives on the host, and these are
+# local-only artifacts.
+deploy
+.playwright-mcp
+
+README.md
+logo.png
+.DS_Store
+**/.DS_Store

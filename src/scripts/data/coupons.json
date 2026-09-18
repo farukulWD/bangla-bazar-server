@@ -1,0 +1,50 @@
+[
+  {
+    "_id": "669ac18e6abfd185610bad78",
+    "title": "Summer Gift Voucher",
+    "couponCode": "SUMMER26",
+    "logo": "https://i.ibb.co/23kQcB9/ins3.jpg",
+    "endTime": "2026-10-18T20:38:00.000Z",
+    "discountType": "percentage",
+    "discountValue": 10,
+    "minimumAmount": 500,
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "29793ea82a9fa54a93a5a6db",
+    "title": "Winter Gift Voucher",
+    "couponCode": "WINTER25",
+    "logo": "https://i.ibb.co/wBBYm7j/ins4.jpg",
+    "endTime": "2025-05-31T20:19:00.000Z",
+    "discountType": "fixed",
+    "discountValue": 100,
+    "minimumAmount": 1500,
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "6066014d9cc9a2035a53b7a0",
+    "title": "Summer Gift Voucher",
+    "couponCode": "SUMMER24",
+    "logo": "https://i.ibb.co/4thS4Z1/ins2.jpg",
+    "endTime": "2024-12-20T00:56:00.000Z",
+    "discountType": "percentage",
+    "discountValue": 10,
+    "minimumAmount": 1000,
+    "status": "show",
+    "isDeleted": false
+  },
+  {
+    "_id": "3463bb993c1447a325274c8f",
+    "title": "August Gift Voucher",
+    "couponCode": "AUGUST24",
+    "logo": "https://i.ibb.co/PDLPDHc/ins1.jpg",
+    "endTime": "2024-10-31T08:30:00.000Z",
+    "discountType": "percentage",
+    "discountValue": 50,
+    "minimumAmount": 2000,
+    "status": "show",
+    "isDeleted": false
+  }
+]
