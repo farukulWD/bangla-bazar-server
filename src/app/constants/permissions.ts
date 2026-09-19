@@ -7,6 +7,7 @@ export enum PermissionModule {
   Order = "order",
   Coupon = "coupon",
   Currency = "currency",
+  Contact = "contact",
   Settings = "settings",
 }
 
@@ -95,6 +96,12 @@ export enum CurrencyPermission {
   DeleteCurrency = "can_delete_currency",
 }
 
+export enum ContactPermission {
+  ViewContacts = "can_view_contacts",
+  UpdateContactStatus = "can_update_contact_status",
+  DeleteContact = "can_delete_contact",
+}
+
 /**
  * Settings are a single stored document, so there is nothing to add or delete —
  * only reading the panel and saving it. Publishing is not a concept here either:
@@ -114,6 +121,7 @@ export const PERMISSION_REGISTRY = {
   [PermissionModule.Order]: OrderPermission,
   [PermissionModule.Coupon]: CouponPermission,
   [PermissionModule.Currency]: CurrencyPermission,
+  [PermissionModule.Contact]: ContactPermission,
   [PermissionModule.Settings]: SettingsPermission,
 } as const;
 
@@ -126,6 +134,7 @@ export const PERMISSION_MODULE_LABELS: Record<PermissionModule, string> = {
   [PermissionModule.Order]: "Orders",
   [PermissionModule.Coupon]: "Coupons",
   [PermissionModule.Currency]: "Currency",
+  [PermissionModule.Contact]: "Contact messages",
   [PermissionModule.Settings]: "Settings",
 };
 
@@ -171,6 +180,9 @@ export const PERMISSION_LABELS: Record<TAnyPermission, string> = {
   [CurrencyPermission.PublishCurrency]: "Publish or unpublish currency",
   [CurrencyPermission.SetBaseCurrency]: "Change the base currency",
   [CurrencyPermission.DeleteCurrency]: "Delete currency",
+  [ContactPermission.ViewContacts]: "View contact messages",
+  [ContactPermission.UpdateContactStatus]: "Change a contact message's status",
+  [ContactPermission.DeleteContact]: "Delete contact message",
   [SettingsPermission.ViewSettings]: "View settings",
   [SettingsPermission.EditSettings]: "Edit settings",
 };

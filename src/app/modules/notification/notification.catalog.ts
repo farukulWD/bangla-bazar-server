@@ -1,4 +1,5 @@
 import {
+  ContactPermission,
   CouponPermission,
   OrderPermission,
   PermissionModule,
@@ -32,7 +33,12 @@ const coupons: TStaffRoute = {
   permission: CouponPermission.ViewCoupons,
 };
 
-export const STAFF_ROUTES = { orders, products, coupons } as const;
+const contacts: TStaffRoute = {
+  module: PermissionModule.Contact,
+  permission: ContactPermission.ViewContacts,
+};
+
+export const STAFF_ROUTES = { orders, products, coupons, contacts } as const;
 
 const orderSubject = (orderId: string, invoice: number) => ({
   kind: "order" as const,
@@ -230,6 +236,23 @@ export const NOTIFICATION_CATALOG: TCatalog = {
           kind: "coupon",
           id: input.couponId,
           code: input.couponCode,
+        },
+      }),
+    },
+  },
+
+  "contact.received": {
+    enabled: true,
+    dedupeKey: (input) => `contact.received:${input.contactId}`,
+    staff: {
+      route: contacts,
+      render: (input): TRendered => ({
+        title: "New contact message",
+        body: `${input.name} wrote: ${input.subject}`,
+        link: `/admin/contacts/${input.contactId}`,
+        subject: {
+          kind: "contact",
+          id: input.contactId,
         },
       }),
     },

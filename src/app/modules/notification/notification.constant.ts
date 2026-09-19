@@ -7,12 +7,14 @@ export const NOTIFICATION_EVENTS = [
   "order.payment",
   "product.low_stock",
   "coupon.expiring",
+  "contact.received",
 ] as const;
 
 export const NOTIFICATION_SUBJECT_KINDS = [
   "order",
   "product",
   "coupon",
+  "contact",
 ] as const;
 
 export const NOTIFICATION_TITLE_MAX = 160;

@@ -5,6 +5,7 @@ import { attributeRoutes } from "../modules/attribute/attribute.routes";
 import { authRoutes } from "../modules/auth/auth.routes";
 import { cartRoutes } from "../modules/cart/cart.routes";
 import { categoryRoutes } from "../modules/category/category.routes";
+import { contactRoutes } from "../modules/contact/contact.routes";
 import { couponRoutes } from "../modules/coupon/coupon.routes";
 import { currencyRoutes } from "../modules/currency/currency.routes";
 import { notificationRoutes } from "../modules/notification/notification.routes";
@@ -23,6 +24,7 @@ const moduleRoutes = [
   { path: "/attributes", route: attributeRoutes },
   { path: "/carts", route: cartRoutes },
   { path: "/category", route: categoryRoutes },
+  { path: "/contacts", route: contactRoutes },
   { path: "/coupons", route: couponRoutes },
   { path: "/currencies", route: currencyRoutes },
   { path: "/notifications", route: notificationRoutes },

@@ -93,6 +93,12 @@ export type TNotifyInput = TActor &
         couponCode: string;
         endTime: string;
       }
+    | {
+        event: "contact.received";
+        contactId: string;
+        name: string;
+        subject: string;
+      }
   );
 
 export type TNotifyOf<E extends TNotificationEvent> = Extract<
