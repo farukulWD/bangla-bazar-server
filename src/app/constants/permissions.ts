@@ -8,6 +8,7 @@ export enum PermissionModule {
   Coupon = "coupon",
   Currency = "currency",
   Settings = "settings",
+  Contact = "contact",
 }
 
 export type TPermissionOf<M extends PermissionModule> =
@@ -105,6 +106,12 @@ export enum SettingsPermission {
   EditSettings = "can_edit_settings",
 }
 
+export enum ContactPermission {
+  ViewContacts = "can_view_contacts",
+  EditContact = "can_edit_contact",
+  DeleteContact = "can_delete_contact",
+}
+
 export const PERMISSION_REGISTRY = {
   [PermissionModule.User]: UserPermission,
   [PermissionModule.Role]: RolePermission,
@@ -115,6 +122,7 @@ export const PERMISSION_REGISTRY = {
   [PermissionModule.Coupon]: CouponPermission,
   [PermissionModule.Currency]: CurrencyPermission,
   [PermissionModule.Settings]: SettingsPermission,
+  [PermissionModule.Contact]: ContactPermission,
 } as const;
 
 export const PERMISSION_MODULE_LABELS: Record<PermissionModule, string> = {
@@ -127,6 +135,7 @@ export const PERMISSION_MODULE_LABELS: Record<PermissionModule, string> = {
   [PermissionModule.Coupon]: "Coupons",
   [PermissionModule.Currency]: "Currency",
   [PermissionModule.Settings]: "Settings",
+  [PermissionModule.Contact]: "Contact messages",
 };
 
 export const PERMISSION_LABELS: Record<TAnyPermission, string> = {
@@ -173,6 +182,9 @@ export const PERMISSION_LABELS: Record<TAnyPermission, string> = {
   [CurrencyPermission.DeleteCurrency]: "Delete currency",
   [SettingsPermission.ViewSettings]: "View settings",
   [SettingsPermission.EditSettings]: "Edit settings",
+  [ContactPermission.ViewContacts]: "View contact messages",
+  [ContactPermission.EditContact]: "Change contact message status",
+  [ContactPermission.DeleteContact]: "Delete contact message",
 };
 
 export const PERMISSION_MODULES = Object.values(PermissionModule);

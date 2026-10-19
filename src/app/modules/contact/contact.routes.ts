@@ -1,0 +1,66 @@
+import { Router } from "express";
+
+import {
+  ContactPermission,
+  PermissionModule,
+} from "../../constants/permissions";
+import checkAuth from "../../middleware/checkAuth";
+import checkPermission from "../../middleware/checkPermission";
+import optionalAuth from "../../middleware/optionalAuth";
+import { publicRateLimit } from "../../middleware/rateLimit";
+import validateRequest from "../../middleware/validateRequest";
+import { contactController } from "./contact.controller";
+import { contactValidation } from "./contact.validation";
+
+const router = Router();
+
+const can = (permission: ContactPermission) =>
+  checkPermission(PermissionModule.Contact, permission);
+
+const contactSubmitLimiter = publicRateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 5,
+  message: "Too many messages sent. Please try again later.",
+  prefix: "rl:contact:submit:",
+});
+
+router.post(
+  "/",
+  contactSubmitLimiter,
+  optionalAuth,
+  validateRequest(contactValidation.createContactValidationSchema),
+  contactController.createContact,
+);
+
+router.get(
+  "/",
+  checkAuth,
+  can(ContactPermission.ViewContacts),
+  contactController.getContacts,
+);
+
+router.get(
+  "/:id",
+  checkAuth,
+  can(ContactPermission.ViewContacts),
+  validateRequest(contactValidation.idParamValidationSchema),
+  contactController.getContactById,
+);
+
+router.patch(
+  "/:id/status",
+  checkAuth,
+  can(ContactPermission.EditContact),
+  validateRequest(contactValidation.updateStatusValidationSchema),
+  contactController.updateContactStatus,
+);
+
+router.delete(
+  "/:id",
+  checkAuth,
+  can(ContactPermission.DeleteContact),
+  validateRequest(contactValidation.idParamValidationSchema),
+  contactController.deleteContact,
+);
+
+export const contactRoutes: Router = router;
