@@ -78,6 +78,11 @@ const resolveScope = (
 
 const STAFF_POPULATE = [{ path: "user", select: "name email phone" }];
 
+const STAFF_DETAIL_POPULATE = [
+  ...STAFF_POPULATE,
+  { path: "statusHistory.by", select: "name" },
+];
+
 const isMissingTransactionSupport = (error: unknown): boolean =>
   error instanceof Error &&
   /Transaction numbers are only allowed on a replica set member or mongos|Transactions are not supported/i.test(
@@ -383,7 +388,7 @@ const getOrder = async (caller: TAuthUser, id: string): Promise<TOrder> => {
     _id: new Types.ObjectId(id),
     ...(isStaff ? {} : { user: caller._id }),
   })
-    .populate(isStaff ? STAFF_POPULATE : [])
+    .populate(isStaff ? STAFF_DETAIL_POPULATE : [])
     .lean<TOrder | null>();
 
   if (!order) {

@@ -6,6 +6,8 @@ import validateRequest from "../../middleware/validateRequest";
 import { upload } from "../../utils/sendImageToCloudinary";
 import { UserControllers } from "./user.controller";
 import {
+  bulkCustomerStatusSchema,
+  bulkDeleteCustomersSchema,
   createStaffUserSchema,
   promoteUserSchema,
   setUserStatusSchema,
@@ -31,10 +33,40 @@ router.get(
 );
 
 router.get(
+  "/customers/export",
+  checkAuth,
+  checkPermission(PermissionModule.User, UserPermission.ViewUsers),
+  UserControllers.exportCustomers,
+);
+
+router.patch(
+  "/customers/bulk/status",
+  checkAuth,
+  checkPermission(PermissionModule.User, UserPermission.DeactivateUser),
+  validateRequest(bulkCustomerStatusSchema),
+  UserControllers.bulkSetCustomerStatus,
+);
+
+router.patch(
+  "/customers/bulk/delete",
+  checkAuth,
+  checkPermission(PermissionModule.User, UserPermission.DeleteUser),
+  validateRequest(bulkDeleteCustomersSchema),
+  UserControllers.bulkDeleteCustomers,
+);
+
+router.get(
   "/:id",
   checkAuth,
   checkPermission(PermissionModule.User, UserPermission.ViewUsers),
   UserControllers.getUserById,
+);
+
+router.get(
+  "/:id/customer-summary",
+  checkAuth,
+  checkPermission(PermissionModule.User, UserPermission.ViewUsers),
+  UserControllers.getCustomerSummary,
 );
 
 // The `/me` routes must stay above `/:id` — Express matches in order, and "me" is a

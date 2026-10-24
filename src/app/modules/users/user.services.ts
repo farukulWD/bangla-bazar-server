@@ -3,7 +3,9 @@ import { toBdE164, toE164 } from "../../utils/identifier";
 import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary";
 import {
   STAFF_USER_TYPES,
+  TBulkResult,
   TCreateUser,
+  TCustomerOrderStats,
   TUpdateMe,
   TUpdateStaffUser,
   TUser,
@@ -18,6 +20,15 @@ import { Role } from "../roles/roles.model";
 import { QueryFilter, Types } from "mongoose";
 import QueryBuilder from "../../builder/queryBuilder";
 import { TAuthUser } from "../auth/auth.interface";
+import { Order } from "../order/order.model";
+import { ORDER_STATUS } from "../order/order.constant";
+import { TOrderStatus } from "../order/order.interface";
+import { csvCell } from "../order/order.utils";
+import { Address } from "../address/address.model";
+import { CUSTOMER_EXPORT_MAX } from "./user.constant";
+
+const csvRow = (cells: unknown[]): string =>
+  `${cells.map(csvCell).join(",")}\r\n`;
 
 const USER_SEARCHABLE_FIELDS = ["name", "email", "phone"];
 
@@ -192,9 +203,7 @@ const createStaffUser = async (payload: TCreateUser) => {
   return User.findById(user._id).populate("role", ROLE_PROJECTION);
 };
 
-const getUsers = async (rawQuery: Record<string, unknown>) => {
-  const query = parseUserListQuery(rawQuery);
-
+const buildUserFilter = (query: TUserListQuery): QueryFilter<TUser> => {
   const filter: QueryFilter<TUser> = { ...NOT_DELETED };
 
   if (query.userType.length === 1) filter.userType = query.userType[0];
@@ -213,6 +222,44 @@ const getUsers = async (rawQuery: Record<string, unknown>) => {
     })) as QueryFilter<TUser>[];
   }
 
+  return filter;
+};
+
+const isCustomerListQuery = (query: TUserListQuery) =>
+  query.userType.length === 1 && query.userType[0] === UserType.Customer;
+
+const EMPTY_ORDER_STATS: TCustomerOrderStats = {
+  orderCount: 0,
+  totalSpent: 0,
+  lastOrderAt: null,
+};
+
+const getCustomerOrderStats = async (
+  userIds: Types.ObjectId[],
+): Promise<Map<string, TCustomerOrderStats>> => {
+  if (userIds.length === 0) return new Map();
+
+  const rows = await Order.aggregate<
+    TCustomerOrderStats & { _id: Types.ObjectId }
+  >([
+    { $match: { user: { $in: userIds }, status: { $ne: "cancelled" } } },
+    {
+      $group: {
+        _id: "$user",
+        orderCount: { $sum: 1 },
+        totalSpent: { $sum: "$total" },
+        lastOrderAt: { $max: "$createdAt" },
+      },
+    },
+  ]);
+
+  return new Map(rows.map(({ _id, ...stats }) => [_id.toString(), stats]));
+};
+
+const getUsers = async (rawQuery: Record<string, unknown>) => {
+  const query = parseUserListQuery(rawQuery);
+  const filter = buildUserFilter(query);
+
   const builder = new QueryBuilder(
     User.find(filter).populate("role", ROLE_PROJECTION),
     { sort: query.sort, page: query.page, limit: query.limit },
@@ -223,7 +270,17 @@ const getUsers = async (rawQuery: Record<string, unknown>) => {
 
   await builder.paginate();
 
-  const data = await builder.modelQuery;
+  const users = await builder.modelQuery;
+
+  let data: unknown[] = users;
+
+  if (isCustomerListQuery(query)) {
+    const stats = await getCustomerOrderStats(users.map((user) => user._id));
+    data = users.map((user) => ({
+      ...user.toObject(),
+      ...(stats.get(user._id.toString()) ?? EMPTY_ORDER_STATS),
+    }));
+  }
 
   return {
     data,
@@ -354,6 +411,146 @@ const softDeleteUser = async (id: string, actorId: Types.ObjectId) => {
   ).populate("role", ROLE_PROJECTION);
 };
 
+const getCustomerSummary = async (id: string) => {
+  const user = await User.findOne({
+    _id: id,
+    userType: UserType.Customer,
+    ...NOT_DELETED,
+  });
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "Customer not found");
+  }
+
+  const [statusRows, stats, addresses] = await Promise.all([
+    Order.aggregate<{ _id: TOrderStatus; count: number }>([
+      { $match: { user: user._id } },
+      { $group: { _id: "$status", count: { $sum: 1 } } },
+    ]),
+    getCustomerOrderStats([user._id]),
+    Address.find({ user: user._id, isDeleted: false })
+      .sort({ isDefault: -1, createdAt: -1 })
+      .lean(),
+  ]);
+
+  const byStatus = Object.fromEntries(
+    ORDER_STATUS.map((status) => [status, 0]),
+  ) as Record<TOrderStatus, number>;
+
+  for (const row of statusRows) {
+    byStatus[row._id] = row.count;
+  }
+
+  return {
+    user,
+    stats: {
+      ...(stats.get(user._id.toString()) ?? EMPTY_ORDER_STATS),
+      byStatus,
+    },
+    addresses,
+  };
+};
+
+const bulkCustomerWrite = async (
+  ids: string[],
+  actorId: Types.ObjectId,
+  update: Partial<Pick<TUser, "status" | "isDeleted">>,
+): Promise<TBulkResult> => {
+  const result = await User.updateMany(
+    {
+      _id: { $in: ids, $ne: actorId },
+      userType: UserType.Customer,
+      ...NOT_DELETED,
+    },
+    update,
+  );
+
+  const skipped = ids.length - result.matchedCount;
+
+  return {
+    succeeded: result.matchedCount,
+    failed: skipped
+      ? [
+          {
+            index: -1,
+            error: `${skipped} of the selected accounts are not active customers and were skipped`,
+          },
+        ]
+      : [],
+  };
+};
+
+const bulkSetCustomerStatus = (
+  ids: string[],
+  status: TUserStatus,
+  actorId: Types.ObjectId,
+) => bulkCustomerWrite(ids, actorId, { status });
+
+const bulkDeleteCustomers = (ids: string[], actorId: Types.ObjectId) =>
+  bulkCustomerWrite(ids, actorId, { isDeleted: true, status: "inactive" });
+
+const exportCustomers = async (rawQuery: Record<string, unknown>) => {
+  const query = {
+    ...parseUserListQuery(rawQuery),
+    userType: [UserType.Customer],
+  };
+  const filter = buildUserFilter(query);
+
+  if (query.from || query.to) {
+    filter.createdAt = {
+      ...(query.from ? { $gte: query.from } : {}),
+      ...(query.to ? { $lte: query.to } : {}),
+    };
+  }
+
+  const total = await User.countDocuments(filter);
+
+  if (total > CUSTOMER_EXPORT_MAX) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `That is ${total.toLocaleString("en-BD")} customers, and at most ${CUSTOMER_EXPORT_MAX.toLocaleString("en-BD")} can be exported at once. Narrow it with a date range or a status filter.`,
+    );
+  }
+
+  const sortField = query.sort.replace(/^-/, "");
+  const users = await User.find(filter)
+    .sort({ [sortField]: query.sort.startsWith("-") ? -1 : 1 })
+    .lean<(TUser & { _id: Types.ObjectId })[]>();
+
+  const stats = await getCustomerOrderStats(users.map((user) => user._id));
+
+  const header = csvRow([
+    "name",
+    "email",
+    "phone",
+    "status",
+    "orders",
+    "total_spent",
+    "last_order_at",
+    "city",
+    "country",
+    "joined_at",
+  ]);
+
+  const rows = users.map((user) => {
+    const userStats = stats.get(user._id.toString()) ?? EMPTY_ORDER_STATS;
+    return csvRow([
+      user.name,
+      user.email,
+      user.phone,
+      user.status,
+      userStats.orderCount,
+      userStats.totalSpent,
+      userStats.lastOrderAt,
+      user.city,
+      user.country,
+      user.createdAt,
+    ]);
+  });
+
+  return `﻿${header}${rows.join("")}`;
+};
+
 const updateMe = async (user: TAuthUser, payload: TUpdateMe) => {
   // Whitelisted field by field rather than spread: a body carrying `userType` or
   // `role` must not be able to promote its own sender.
@@ -408,6 +605,10 @@ export const userServices = {
   demoteUser,
   setUserStatus,
   softDeleteUser,
+  getCustomerSummary,
+  bulkSetCustomerStatus,
+  bulkDeleteCustomers,
+  exportCustomers,
   updateMe,
   updateMyImage,
 };

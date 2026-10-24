@@ -91,3 +91,14 @@ export type TUserListQuery = {
   limit: number;
 };
 export const USER_SORTABLE_FIELDS = ["name", "createdAt"] as const;
+
+export type TCustomerOrderStats = {
+  orderCount: number;
+  totalSpent: number;
+  lastOrderAt: Date | null;
+};
+
+export type TBulkResult = {
+  succeeded: number;
+  failed: { index: number; identifier?: string; error: string }[];
+};

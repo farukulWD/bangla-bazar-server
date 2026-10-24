@@ -8,6 +8,7 @@ import { categoryRoutes } from "../modules/category/category.routes";
 import { contactRoutes } from "../modules/contact/contact.routes";
 import { couponRoutes } from "../modules/coupon/coupon.routes";
 import { currencyRoutes } from "../modules/currency/currency.routes";
+import { dashboardRoutes } from "../modules/dashboard/dashboard.routes";
 import { notificationRoutes } from "../modules/notification/notification.routes";
 import { orderRoutes } from "../modules/order/order.routes";
 import { paymentRoutes } from "../modules/payment/payment.routes";
@@ -27,6 +28,7 @@ const moduleRoutes = [
   { path: "/contacts", route: contactRoutes },
   { path: "/coupons", route: couponRoutes },
   { path: "/currencies", route: currencyRoutes },
+  { path: "/dashboard", route: dashboardRoutes },
   { path: "/notifications", route: notificationRoutes },
   { path: "/orders", route: orderRoutes },
   { path: "/payments", route: paymentRoutes },
