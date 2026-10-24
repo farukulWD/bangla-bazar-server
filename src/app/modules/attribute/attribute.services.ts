@@ -367,10 +367,6 @@ const bulkUpdateAttributes = async (
 
   const missing = ids.length - result.matchedCount;
 
-  await Promise.all(
-    ids.map((attributeId) => queueCascadeAttributeValue({ attributeId })),
-  );
-
   return {
     succeeded: result.matchedCount,
     failed: missing
@@ -391,6 +387,10 @@ const bulkDeleteAttributes = async (ids: string[]): Promise<TBulkResult> => {
   );
 
   const missing = ids.length - result.matchedCount;
+
+  await Promise.all(
+    ids.map((attributeId) => queueCascadeAttributeValue({ attributeId })),
+  );
 
   return {
     succeeded: result.matchedCount,
