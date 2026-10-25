@@ -92,7 +92,7 @@ export const NOTIFICATION_CATALOG: TCatalog = {
       render: (input): TRendered => ({
         title: "New order placed",
         body: `Order ${invoiceCode(input.invoice)} — ${formatMoney(input.total)}.`,
-        link: `/admin/orders/${input.orderId}`,
+        link: `/orders/${input.orderId}`,
         subject: orderSubject(input.orderId, input.invoice),
       }),
     },
@@ -128,7 +128,7 @@ export const NOTIFICATION_CATALOG: TCatalog = {
         return {
           title: "Order status changed",
           body: `Order ${invoiceCode(input.invoice)} ${copy.staff}`,
-          link: `/admin/orders/${input.orderId}`,
+          link: `/orders/${input.orderId}`,
           subject: orderSubject(input.orderId, input.invoice),
         };
       },
@@ -152,7 +152,7 @@ export const NOTIFICATION_CATALOG: TCatalog = {
       render: (input): TRendered => ({
         title: "Order cancelled",
         body: `Order ${invoiceCode(input.invoice)} was cancelled and its stock returned.`,
-        link: `/admin/orders/${input.orderId}`,
+        link: `/orders/${input.orderId}`,
         subject: orderSubject(input.orderId, input.invoice),
       }),
     },
@@ -189,7 +189,7 @@ export const NOTIFICATION_CATALOG: TCatalog = {
         return {
           title: "Payment status changed",
           body: `Order ${invoiceCode(input.invoice)} ${copy.staff}`,
-          link: `/admin/orders/${input.orderId}`,
+          link: `/orders/${input.orderId}`,
           subject: orderSubject(input.orderId, input.invoice),
         };
       },
@@ -205,7 +205,7 @@ export const NOTIFICATION_CATALOG: TCatalog = {
       render: (input): TRendered => ({
         title: "Product running low",
         body: `${input.title}${input.sku ? ` (${input.sku})` : ""} — ${input.stock} left.`,
-        link: `/admin/products/${input.productId}`,
+        link: `/products/${input.productId}`,
         subject: {
           kind: "product",
           id: input.productId,
@@ -225,7 +225,7 @@ export const NOTIFICATION_CATALOG: TCatalog = {
       render: (input): TRendered => ({
         title: "Coupon expiring soon",
         body: `${input.couponCode} expires on ${input.endTime.slice(0, 10)}.`,
-        link: `/admin/coupons/${input.couponId}`,
+        link: `/coupons/${input.couponId}`,
         subject: {
           kind: "coupon",
           id: input.couponId,
