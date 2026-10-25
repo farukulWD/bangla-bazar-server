@@ -10,6 +10,7 @@ import {
   clientIp,
   clientReturnUrl,
   toMyPaymentView,
+  toPaymentView,
 } from "./payment.utils";
 
 const initPayment = catchAsync(async (req, res) => {
@@ -88,7 +89,7 @@ const listPayments = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
     success: true,
     message: "Payments fetched successfully",
-    data,
+    data: data.map(toPaymentView),
     pagination,
   });
 });
