@@ -128,6 +128,10 @@ const productSchema = new Schema<TProduct>(
       default: 0,
       min: 0,
     },
+    rating: {
+      average: { type: Number, default: 0, min: 0, max: 5 },
+      count: { type: Number, default: 0, min: 0 },
+    },
     isCombination: {
       type: Boolean,
       default: false,
@@ -157,6 +161,7 @@ productSchema.index({ slug: 1 }, { unique: true });
 productSchema.index({ isDeleted: 1, status: 1 });
 productSchema.index({ category: 1, status: 1 });
 productSchema.index({ categories: 1 });
+productSchema.index({ "rating.average": -1 });
 productSchema.index({ "variants.options.valueId": 1 });
 productSchema.index({ sku: 1 }, { sparse: true });
 

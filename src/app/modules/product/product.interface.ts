@@ -27,6 +27,11 @@ export type TProductVariant = {
   isDeleted: boolean;
 };
 
+export type TProductRating = {
+  average: number;
+  count: number;
+};
+
 export type TProduct = {
   title: string;
   description?: string;
@@ -41,6 +46,7 @@ export type TProduct = {
   prices: TProductPrices;
   stock: number;
   sales: number;
+  rating: TProductRating;
   isCombination: boolean;
   variants: TProductVariant[];
   status: TProductStatus;

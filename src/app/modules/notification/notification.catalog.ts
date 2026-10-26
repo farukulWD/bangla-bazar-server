@@ -3,6 +3,7 @@ import {
   OrderPermission,
   PermissionModule,
   ProductPermission,
+  ReviewPermission,
 } from "../../constants/permissions";
 import { formatMoney } from "../../utils/money";
 import { TOrderStatus, TPaymentStatus } from "../order/order.interface";
@@ -32,7 +33,12 @@ const coupons: TStaffRoute = {
   permission: CouponPermission.ViewCoupons,
 };
 
-export const STAFF_ROUTES = { orders, products, coupons } as const;
+const reviews: TStaffRoute = {
+  module: PermissionModule.Review,
+  permission: ReviewPermission.ViewReviews,
+};
+
+export const STAFF_ROUTES = { orders, products, coupons, reviews } as const;
 
 const orderSubject = (orderId: string, invoice: number) => ({
   kind: "order" as const,
@@ -230,6 +236,23 @@ export const NOTIFICATION_CATALOG: TCatalog = {
           kind: "coupon",
           id: input.couponId,
           code: input.couponCode,
+        },
+      }),
+    },
+  },
+
+  "review.submitted": {
+    enabled: true,
+    dedupeKey: (input) => `review.submitted:${input.reviewId}`,
+    staff: {
+      route: reviews,
+      render: (input): TRendered => ({
+        title: "New review",
+        body: `${input.rating}★ on ${input.productTitle}`,
+        link: `/reviews?id=${input.reviewId}`,
+        subject: {
+          kind: "review",
+          id: input.reviewId,
         },
       }),
     },

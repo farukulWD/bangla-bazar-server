@@ -93,6 +93,13 @@ export type TNotifyInput = TActor &
         couponCode: string;
         endTime: string;
       }
+    | {
+        event: "review.submitted";
+        reviewId: string;
+        productId: string;
+        productTitle: string;
+        rating: number;
+      }
   );
 
 export type TNotifyOf<E extends TNotificationEvent> = Extract<
