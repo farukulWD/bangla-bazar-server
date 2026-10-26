@@ -111,6 +111,58 @@ const deleteUser = catchAsync(async (req, res) => {
   });
 });
 
+const getCustomerSummary = catchAsync(async (req, res) => {
+  const result = await userServices.getCustomerSummary(req.params.id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Customer fetched successfully",
+    data: result,
+  });
+});
+
+const bulkSetCustomerStatus = catchAsync(async (req, res) => {
+  const actor = req.user as TAuthUser;
+  const { ids, status } = req.body;
+  const result = await userServices.bulkSetCustomerStatus(
+    ids,
+    status,
+    actor._id,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `${result.succeeded} customers ${status === "active" ? "activated" : "deactivated"}`,
+    data: result,
+  });
+});
+
+const bulkDeleteCustomers = catchAsync(async (req, res) => {
+  const actor = req.user as TAuthUser;
+  const result = await userServices.bulkDeleteCustomers(
+    req.body.ids,
+    actor._id,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `${result.succeeded} customers deleted`,
+    data: result,
+  });
+});
+
+const exportCustomers = catchAsync(async (req, res) => {
+  const csv = await userServices.exportCustomers(req.query);
+  const filename = `customers-${new Date().toISOString().slice(0, 10)}.csv`;
+
+  res.setHeader("Content-Type", "text/csv; charset=utf-8");
+  res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+  res.send(csv);
+});
+
 const updateMe = catchAsync(async (req, res) => {
   const result = await userServices.updateMe(req.user as TAuthUser, req.body);
 
@@ -149,6 +201,10 @@ export const UserControllers = {
   demoteUser,
   setUserStatus,
   deleteUser,
+  getCustomerSummary,
+  bulkSetCustomerStatus,
+  bulkDeleteCustomers,
+  exportCustomers,
   updateMe,
   updateMyImage,
 };

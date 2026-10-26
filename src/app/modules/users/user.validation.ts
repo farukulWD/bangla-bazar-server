@@ -1,5 +1,6 @@
 import z from "zod";
 import { UserType } from "./user.interface";
+import { CUSTOMER_BULK_MAX } from "./user.constant";
 const objectId = z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid id");
 
 const status = z.enum(["active", "inactive"]);
@@ -39,6 +40,27 @@ export const promoteUserSchema = z.object({
 export const setUserStatusSchema = z.object({
   body: z.object({
     status,
+  }),
+});
+
+const customerIds = z
+  .array(objectId)
+  .min(1, "Select at least one customer")
+  .max(
+    CUSTOMER_BULK_MAX,
+    `Select at most ${CUSTOMER_BULK_MAX} customers at a time`,
+  );
+
+export const bulkCustomerStatusSchema = z.object({
+  body: z.object({
+    ids: customerIds,
+    status,
+  }),
+});
+
+export const bulkDeleteCustomersSchema = z.object({
+  body: z.object({
+    ids: customerIds,
   }),
 });
 
