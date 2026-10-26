@@ -13,6 +13,7 @@ import { notificationRoutes } from "../modules/notification/notification.routes"
 import { orderRoutes } from "../modules/order/order.routes";
 import { paymentRoutes } from "../modules/payment/payment.routes";
 import { productRoutes } from "../modules/product/product.routes";
+import { reviewRoutes } from "../modules/review/review.routes";
 import { roleRoutes } from "../modules/roles/roles.routes";
 import { settingsRoutes } from "../modules/settings/settings.routes";
 import { userRoutes } from "../modules/users/user.routes";
@@ -33,6 +34,7 @@ const moduleRoutes = [
   { path: "/orders", route: orderRoutes },
   { path: "/payments", route: paymentRoutes },
   { path: "/products", route: productRoutes },
+  { path: "/reviews", route: reviewRoutes },
   { path: "/roles", route: roleRoutes },
   { path: "/settings", route: settingsRoutes },
   { path: "/users", route: userRoutes },
